@@ -1,0 +1,29 @@
+{
+  "Log in": "Iniciar sesión",
+  "Register": "Registrarse",
+  "Email Address": "Correo electrónico",
+  "Password": "Contraseña",
+  "Remember me": "Recuérdame",
+  "Forgot your password?": "¿Olvidaste tu contraseña?",
+  "Name": "Nombre",
+  "Confirm Password": "Confirmar contraseña",
+  "Already registered?": "¿Ya tienes cuenta?",
+  "Reset Password": "Restablecer contraseña",
+  "Send Password Reset Link": "Enviar enlace de recuperación",
+
+  "passwords.sent": "Te hemos enviado un enlace para restablecer tu contraseña.",
+  "passwords.user": "No encontramos un usuario con ese correo.",
+  "passwords.throttled": "Espera antes de intentarlo nuevamente.",
+  "passwords.token": "El enlace de recuperación no es válido.",
+
+  "auth.failed": "Las credenciales no son correctas.",
+  "auth.password": "La contraseña es incorrecta.",
+  "auth.throttle": "Demasiados intentos. Intenta de nuevo en unos segundos.",
+
+  "validation.confirmed": "La confirmación no coincide.",
+  "validation.unique": "Este valor ya está registrado.",
+  "validation.required": "Este campo es obligatorio.",
+  "validation.email": "Debe ser un correo electrónico válido.",
+  "validation.min.string": "El campo debe tener al menos :min caracteres.",
+  "validation.max.string": "El campo no debe tener más de :max caracteres."
+}

@@ -42,6 +42,7 @@ $user = User::create([
     'username' => $request->username,
     'email' => $request->email,
     'password' => Hash::make($request->password),
+    'rol' => 'usuario',
 ]);
 
         event(new Registered($user));

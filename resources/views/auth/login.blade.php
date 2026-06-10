@@ -55,12 +55,16 @@
                 Iniciar sesión
             </button>
 
-            <p style="text-align: center; font-size: 0.75rem; color: #71717a; margin: 0; margin-top: 0.5rem;">
-                ¿No tienes cuenta?
-                <a href="{{ route('register') }}" style="color: #dc2626; font-weight: bold; text-decoration: none;" onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'">
-                    CREAR CUENTA
-                </a>
-            </p>
+           <p style="text-align: center; font-size: 0.75rem; color: #71717a; margin: 0; margin-top: 0.5rem;">
+    ¿No tienes una cuenta?
+
+    <a href="{{ route('register') }}"
+       style="color: #dc2626; font-weight: bold; text-decoration: none;"
+       onmouseover="this.style.textDecoration='underline'"
+       onmouseout="this.style.textDecoration='none'">
+        Regístrate
+    </a>
+</p>
 
         </form>
     </div>

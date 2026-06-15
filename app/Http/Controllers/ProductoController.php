@@ -70,4 +70,39 @@ class ProductoController extends Controller
 
         return redirect()->route('productos.index');
     }
-}
+
+    // ==========================================
+    // 📱 NUEVA FUNCIÓN EXCLUSIVA PARA EL CELULAR
+    // ==========================================
+    public function storeCelular(Request $request)
+    {
+        // 1. Recolectamos los textos de forma manual y segura
+        $producto = new Producto();
+        $producto->nombre = $request->input('nombre');
+        $producto->descripcion = $request->input('descripcion');
+        $producto->precio = $request->input('precio');
+        $producto->stock = $request->input('stock');
+        $producto->talla = $request->input('talla');
+        $producto->categoria = $request->input('categoria');
+
+        // 2. 📸 Procesamos el archivo real de la foto
+        if ($request->hasFile('imagen')) {
+            // El método 'store' guarda el archivo en 'storage/app/public/productos'
+            // y nos devuelve la ruta exacta (ej: 'productos/abc123xyz.jpg')
+            $rutaFoto = $request->file('imagen')->store('productos', 'public');
+            $producto->imagen = $rutaFoto;
+        } else {
+            $producto->imagen = null;
+        }
+
+        // 3. Guardamos en la base de datos
+        $producto->save();
+
+        // 4. Le respondemos un JSON lindo al celular Honor para que no falle
+        return response()->json([
+            'success' => true,
+            'message' => '¡Producto guardado desde el celular!',
+            'data' => $producto
+        ], 201);
+    }
+} // <-- Esta es la última llave de cierre de tu controlador

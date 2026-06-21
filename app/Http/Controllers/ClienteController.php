@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 
 class ClienteController extends Controller
 {
-    // Muestra la tienda normal al cliente
+    
     public function index()
     {
         $productos = Producto::all();

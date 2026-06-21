@@ -76,6 +76,10 @@
                 <button type="submit" style="width: 100%; margin-top: 1rem; background-color: #dc2626; color: #ffffff; padding: 0.9rem; border: none; border-radius: 0.75rem; font-weight: bold; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.1em; cursor: pointer;" onmouseover="this.style.backgroundColor='#b91c1c'" onmouseout="this.style.backgroundColor='#dc2626'">
                     Guardar Producto
                 </button>
+                <div style="margin-bottom: 1.5rem;">
+    <label style="color: white; font-weight: bold; display: block; margin-bottom: 0.5rem;">CÓDIGO DE BARRAS REAL:</label>
+    <input type="text" name="codigo_barras" style="background-color: #18181b; border: 1px solid #27272a; color: white; padding: 0.75rem; border-radius: 0.35rem; width: 100%; font-weight: bold;" placeholder="Haz clic aquí y escanea la etiqueta de la prenda">
+</div>
 
             </form>
         </div>

@@ -18,41 +18,49 @@ class ProductoController extends Controller
         return view('productos.create');
     }
 
-    public function store(Request $request)
-    {
-        // Tomamos todos los datos del formulario (nombre, precio, stock, talla, categoria)
-        $datos = $request->all();
+public function store(Request $request)
+{
+    // 1. En lugar de $request->all(), validamos y filtramos los datos obligatorios
+    $datos = $request->validate([
+        'nombre'        => 'required|string|max:255',
+        'descripcion'   => 'nullable|string',
+        'precio'        => 'required|numeric|min:0',
+        'stock'         => 'required|integer|min:0',
+        'talla'         => 'nullable|string',
+        'categoria'     => 'required|string',
+        'codigo_barras' => 'nullable|string',
+    ]);
 
-        // Si el empleado subió una foto, la guardamos de forma segura
-        if ($request->hasFile('imagen')) {
-            $datos['imagen'] = $request->file('imagen')->store('productos', 'public');
-        }
-
-        // Guardamos todo en la base de datos con tu método rápido
-        Producto::create($datos);
-
-        return redirect()->route('productos.index');
+    // 2. Procesamos la imagen si el usuario la subió
+    if ($request->hasFile('imagen')) {
+        $datos['imagen'] = $request->file('imagen')->store('productos', 'public');
     }
+
+    // 3. Guardamos en la base de datos de manera segura
+    Producto::create($datos);
+
+    return redirect()->route('productos.index');
+}
 
     public function show(string $id)
     {
-        // No lo necesitas por ahora para la tienda, lo dejamos vacío
+       
     }
 
-    // 1. MOSTRAR LA PANTALLA PARA EDITAR EL PRODUCTO
+    
     public function edit(string $id)
     {
         $producto = Producto::findOrFail($id);
         return view('productos.edit', compact('producto'));
     }
 
-    // 2. GUARDAR LOS CAMBIOS MODIFICADOS
+   
     public function update(Request $request, string $id)
     {
         $producto = Producto::findOrFail($id);
         $datos = $request->all();
 
-        // Si subió una nueva foto, la cambiamos
+        
         if ($request->hasFile('imagen')) {
             $datos['imagen'] = $request->file('imagen')->store('productos', 'public');
         }
@@ -62,7 +70,7 @@ class ProductoController extends Controller
         return redirect()->route('productos.index');
     }
 
-    // 3. ELIMINAR EL PRODUCTO SI SE AGOTÓ
+    
     public function destroy(string $id)
     {
         $producto = Producto::findOrFail($id);
@@ -70,4 +78,22 @@ class ProductoController extends Controller
 
         return redirect()->route('productos.index');
     }
+
+    public function buscarPorCodigo($codigo)
+{
+    
+    $producto = Producto::where('codigo_barras', $codigo)->first();
+
+    if ($producto) {
+        return response()->json([
+            'success' => true,
+            'id' => $producto->id,
+            'nombre' => $producto->nombre,
+            'precio' => $producto->precio
+        ]);
+    }
+
+    
+    return response()->json(['success' => false]);
+}
 }

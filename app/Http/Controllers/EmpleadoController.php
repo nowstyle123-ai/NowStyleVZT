@@ -13,17 +13,20 @@ class EmpleadoController extends Controller
         // Traemos los pedidos pendientes de estampado
         $pedidos = Pedido::with('user')->whereIn('estado', ['pendiente', 'en proceso'])->orderBy('created_at', 'desc')->get();
         
-        // ¡IMPORTANTE! Traemos todos los productos para que el empleado los gestione
+        //  Traemos todos los productos para que el empleado los gestione
         $productos = Producto::all();
 
         return view('Empleado.dashboard', compact('pedidos', 'productos'));
     }
 
-    public function completarPedido($id)
-    {
-        $pedido = Pedido::findOrFail($id);
-        $pedido->update(['estado' => 'terminado']);
+  public function completarPedido($id)
+{
+    $pedido = Pedido::findOrFail($id);
+    
+    // CAMBIADO / VERIFICADO: El estado debe coincidir con la lógica del Blade 
+    $pedido->estado = 'completado'; 
+    $pedido->save();
 
-        return back()->with('success', '¡Pedido despachado y estampado con éxito! 👕');
-    }
+    return redirect()->back()->with('success', '¡Pedido marcado como Listo!');
+}
 }

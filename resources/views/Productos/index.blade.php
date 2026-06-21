@@ -40,7 +40,7 @@
 
                         <div style="background-color: #000000; height: 180px; border-radius: 0.75rem; border: 1px solid #18181b; display: flex; align-items: center; justify-content: center; margin-bottom: 1rem; overflow: hidden;">
                             @if($producto->imagen)
-                                <img src="{{ asset('storage/' . $producto->imagen) }}" style="max-height: 100%; max-width: 100%; object-fit: contain;">
+                                <img src="{{ asset('storage/' . $producto->imagen) }}" alt="Imagen del producto">
                             @else
                                 <span style="color: #4b5563; font-size: 0.8rem; font-weight: bold; text-transform: uppercase;">Sin Foto</span>
                             @endif

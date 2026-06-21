@@ -9,12 +9,20 @@ class Pedido extends Model
 {
     use HasFactory;
 
-    // Campos que permitimos guardar en la base de datos
-    protected $fillable = ['user_id', 'detalles', 'total', 'estado'];
+    // Campos autorizados para guardarse en la base de datos
+protected $fillable = [
+    'user_id',
+    'detalles',
+    'diseno_imagen',
+    'total',
+    'estado'
+];
 
-    // Relación para saber qué usuario hizo el pedido
+    /**
+     * Relación con el usuario dueño del pedido
+     */
     public function user()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'user_id');
     }
 }

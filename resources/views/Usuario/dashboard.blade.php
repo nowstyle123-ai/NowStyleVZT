@@ -49,6 +49,30 @@
         }
         #carrito-sidebar.active { right: 0; }
 
+        /* SIDEBAR DE FILTROS */
+        #filtros-sidebar {
+            position: fixed; top: 0; left: -320px; width: 300px; height: 100vh;
+            background-color: var(--bg-card); border-right: 1px solid var(--border-soft);
+            transition: left 0.3s ease; z-index: 9999; padding: 1.5rem; box-sizing: border-box;
+            display: flex; flex-direction: column;
+            box-shadow: 10px 0 40px rgba(0,0,0,0.6);
+        }
+        #filtros-sidebar.active { left: 0; }
+
+        .filtro-seccion {
+            border-bottom: 1px solid var(--border-soft);
+            padding: 1rem 0;
+        }
+        .filtro-titulo {
+            display: flex; justify-content: space-between; align-items: center;
+            color: white; font-weight: bold; font-size: 0.95rem; cursor: pointer;
+            user-select: none;
+        }
+        .filtro-contenido {
+            margin-top: 0.75rem; display: none; flex-direction: column; gap: 0.6rem;
+        }
+        .filtro-contenido.open { display: flex; }
+
         #carrito-items::-webkit-scrollbar { width: 5px; }
         #carrito-items::-webkit-scrollbar-thumb { background: var(--border-soft); border-radius: 10px; }
         #carrito-items::-webkit-scrollbar-thumb:hover { background: var(--accent); }
@@ -71,11 +95,17 @@
         }
 
         .input-glow {
-            background-color: #000000; border: 1px solid var(--border-soft); color: white;
+            background-color: #000000 !important; border: 1px solid var(--border-soft); color: #ffffff !important;
             padding: 0.75rem; border-radius: 0.5rem; width: 100%; font-size: 0.95rem;
             transition: border-color 0.2s ease;
         }
         .input-glow:focus { outline: none; border-color: var(--accent); }
+
+        /* FORZADO DE COLORES PARA LOS MENÚS DESPLEGABLES */
+        select, select option, .input-glow, .input-glow option, #ordenar-select option, #selector-envio option, #custom-ubicacion option {
+            background-color: #09090b !important;
+            color: #ffffff !important;
+        }
 
         .btn-qty {
             background-color: #27272a; color: white; border: none;
@@ -99,7 +129,7 @@
             background: #000; border: 1px solid var(--border-soft); border-radius: 0.5rem; padding: 0.5rem; text-align: center; position: relative;
         }
         .preview-box img { max-width: 100%; height: 60px; object-fit: contain; border-radius: 0.25rem; }
-        .btn-remove-img { background: var(--accent); color: white; border: none; font-size: 0.7 railsrem; cursor: pointer; border-radius: 0.25rem; padding: 0.2rem 0.4rem; margin-top: 0.25rem; display: inline-block; }
+        .btn-remove-img { background: var(--accent); color: white; border: none; font-size: 0.7rem; cursor: pointer; border-radius: 0.25rem; padding: 0.2rem 0.4rem; margin-top: 0.25rem; display: inline-block; }
     </style>
 
     <div id="catalogo-container" style="background-color: var(--bg-main); min-height: 100vh; width: 100%; display: flex; flex-direction: column; font-family: sans-serif; padding-bottom: 4rem;">
@@ -125,15 +155,24 @@
             </div>
         </div>
 
-        <div style="padding: 0 2rem 1.5rem 2rem;">
-            <p style="color: var(--text-muted); font-size: 0.8rem; font-weight: bold; text-transform: uppercase; margin-bottom: 0.5rem;">Filtrar catálogo:</p>
-            <div style="display: flex; gap: 0.5rem; overflow-x: auto; padding-bottom: 0.5rem;">
-                <button class="btn-categoria active" onclick="filtrarCategoria('todas', this)">Todas</button>
-                @foreach($productos->pluck('categoria')->unique() as $cat)
-                    @if($cat)
-                        <button class="btn-categoria" onclick="filtrarCategoria('{{ $cat }}', this)">{{ $cat }}</button>
-                    @endif
-                @endforeach
+        <div style="padding: 0 2rem; margin-bottom: 2rem; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-soft); padding-bottom: 1rem;">
+            <button onclick="toggleFiltros(true)" style="background: none; border: none; color: #ffffff; display: flex; align-items: center; gap: 0.6rem; cursor: pointer; font-family: 'Inter', sans-serif; font-size: 0.95rem; font-weight: bold; text-transform: uppercase; letter-spacing: 0.05em;">
+                <span style="font-size: 1.1rem; color: var(--accent);">⌥</span> Mostrar Filtros
+            </button>
+
+            <div style="display: flex; align-items: center; gap: 1.5rem;">
+                <span style="color: var(--text-muted); font-size: 0.9rem;">
+                    <strong id="contador-productos" style="color: #ffffff;">{{ $productos->count() }}</strong> Productos
+                </span>
+                
+                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                    <label style="color: var(--text-muted); font-size: 0.85rem; font-weight: bold; text-transform: uppercase;">Ordenar por:</label>
+                    <select id="ordenar-select" onchange="ordenarProductos()" style="background-color: var(--bg-card); border: 1px solid var(--border-soft); color: white; padding: 0.4rem 1rem; border-radius: 0.5rem; font-size: 0.85rem; font-weight: bold; cursor: pointer; outline: none; border-color: rgba(220, 38, 38, 0.3);">
+                        <option value="predeterminado">Predeterminado</option>
+                        <option value="menor-precio">Menor Precio</option>
+                        <option value="mayor-precio">Mayor Precio</option>
+                    </select>
+                </div>
             </div>
         </div>
 
@@ -155,7 +194,16 @@
                     <div style="margin-bottom: 1rem;">
                         <label style="color: var(--text-muted); font-size: 0.75rem; font-weight: bold; display: block; margin-bottom: 0.4rem;">TALLA DISPONIBLE:</label>
                         <select id="talla-{{ $producto->id }}" class="input-glow" style="padding: 0.4rem; font-size: 0.8rem; font-weight: bold; text-transform: uppercase; border-color: rgba(220, 38, 38, 0.4);">
-                            <option value="{{ $producto->talla }}">{{ $producto->talla }}</option>
+                            @if(!empty($producto->talla) && trim($producto->talla) != '')
+                                @foreach(explode(',', $producto->talla) as $tallaIndividual)
+                                    <option value="{{ trim($tallaIndividual) }}">{{ trim($tallaIndividual) }}</option>
+                                @endforeach
+                            @else
+                                <option value="S">S</option>
+                                <option value="M" selected>M</option>
+                                <option value="L">L</option>
+                                <option value="XL">XL</option>
+                            @endif
                         </select>
                     </div>
 
@@ -173,6 +221,34 @@
                     </div>
                 </div>
             @endforeach
+        </div>
+    </div>
+
+    <div id="filtros-sidebar">
+        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-soft); padding-bottom: 1rem; margin-bottom: 1rem;">
+            <h3 style="color: white; margin: 0; text-transform: uppercase; font-weight: 900; font-size: 1.1rem; display: flex; align-items: center; gap: 0.5rem;">
+                <span onclick="toggleFiltros(false)" style="cursor: pointer; font-size: 1.5rem; line-height: 1; color: var(--text-muted); margin-right: 0.2rem;">&times;</span> Ocultar Filtros
+            </h3>
+        </div>
+
+        <div style="margin-bottom: 1rem;">
+            <button onclick="limpiarTodosLosFiltros()" style="background-color: var(--bg-elevated); border: 1px solid var(--border-soft); color: white; padding: 0.4rem; border-radius: 0.25rem; font-size: 0.75rem; font-weight: bold; cursor: pointer; width: 100%; text-transform: uppercase;">
+                Limpiar filtros
+            </button>
+        </div>
+
+        <div class="filtro-seccion">
+            <div class="filtro-titulo" onclick="toggleAcordeon(this)">
+                <span>► Categoría</span>
+            </div>
+            <div class="filtro-contenido">
+                @foreach(['camisas', 'pantalones', 'pantalonetas', 'buzos'] as $catFija)
+                    <label style="color: var(--text-muted); font-size: 0.85rem; display: flex; align-items: center; gap: 0.6rem; cursor: pointer; text-transform: uppercase; font-weight: bold; padding: 0.2rem 0;">
+                        <input type="checkbox" class="chk-categoria" value="{{ $catFija }}" onchange="filtrarCatalogoCompleto()" style="accent-color: var(--accent); width: 15px; height: 15px; cursor: pointer;">
+                        {{ $catFija }}
+                    </label>
+                @endforeach
+            </div>
         </div>
     </div>
 
@@ -229,6 +305,7 @@
             <button onclick="toggleCarrito()" style="background: none; border: none; color: var(--text-muted); font-size: 1.5rem; cursor: pointer;">&times;</button>
         </div>
         <div id="carrito-items" style="flex-grow: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 1rem; margin-bottom: 1rem;"></div>
+        
         <div style="background-color: #000000; border: 1px solid var(--border-soft); padding: 1rem; border-radius: 0.5rem; display: flex; flex-direction: column; gap: 0.75rem; margin-bottom: 1rem;">
             <div>
                 <label style="color: #71717a; font-size: 0.75rem; font-weight: bold; display: block; margin-bottom: 0.25rem;">CIUDAD DE ENVÍO:</label>
@@ -237,6 +314,12 @@
                     <option value="otras">Otras Ciudades ($12.000)</option>
                 </select>
             </div>
+            
+            <div>
+                <label style="color: #71717a; font-size: 0.75rem; font-weight: bold; display: block; margin-bottom: 0.25rem;">DIRECCIÓN DE ENVÍO:</label>
+                <input type="text" id="input-direccion" placeholder="Ej: Calle 45 # 12-34 Apto 301" required style="background-color: #09090b; border: 1px solid var(--border-soft); color: white; padding: 0.4rem; border-radius: 0.25rem; width: 100%; font-size: 0.8rem; box-sizing: border-box;">
+            </div>
+
             <div style="border-top: 1px solid #18181b; padding-top: 0.75rem; margin-top: 0.25rem;">
                 <label style="color: #71717a; font-size: 0.75rem; font-weight: bold; display: block; margin-bottom: 0.25rem;">¿TIENES UN CUPÓN?</label>
                 <div style="display: flex; gap: 0.5rem;">
@@ -246,6 +329,7 @@
                 <div id="mensaje-cupon" style="font-size: 0.7rem; margin-top: 0.25rem; display: none;"></div>
             </div>
         </div>
+
         <div style="border-top: 1px solid var(--border-soft); padding-top: 1rem;">
             <div style="display: flex; justify-content: space-between; color: white; font-weight: bold; font-size: 1.1rem; margin-bottom: 1rem;"><span>TOTAL:</span> <span id="carrito-total">$0</span></div>
             <button onclick="procesarCompra()" style="width: 100%; background-color: var(--accent); color: white; border: none; padding: 0.8rem; border-radius: 0.5rem; font-weight: bold; text-transform: uppercase; cursor: pointer;">Finalizar Compra</button>
@@ -253,12 +337,80 @@
     </div>
 
     <script>
-        // ... (Tu código JavaScript original intacto que gestiona el carro y estampados de forma perfecta) ...
         let carrito = [];
         let imagenesDisenoActuales = []; 
         let itemIdParaEstampar = null;
         let descuentoPorcentaje = 0;
         let cuponAplicadoCodigo = "";
+
+        function toggleFiltros(show) {
+            const sidebar = document.getElementById('filtros-sidebar');
+            if (show) sidebar.classList.add('active');
+            else sidebar.classList.remove('active');
+        }
+
+        function toggleAcordeon(elemento) {
+            const contenido = elemento.nextElementSibling;
+            contenido.classList.toggle('open');
+            const tituloSpan = elemento.querySelector('span');
+            if (contenido.classList.contains('open')) {
+                tituloSpan.innerText = "▼ Categoría";
+            } else {
+                tituloSpan.innerText = "► Categoría";
+            }
+        }
+
+        function filtrarCatalogoCompleto() {
+            const seleccionadas = Array.from(document.querySelectorAll('.chk-categoria:checked')).map(cb => cb.value);
+            let visibles = 0;
+
+            document.querySelectorAll('.producto-card').forEach(card => {
+                const catCard = card.getAttribute('data-categoria').toLowerCase().trim();
+                
+                if (seleccionadas.length === 0 || seleccionadas.includes(catCard)) {
+                    card.style.display = 'flex';
+                    visibles++;
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+
+            document.getElementById('contador-productos').innerText = visibles;
+        }
+
+        function ordenarProductos() {
+            const criterio = document.getElementById('ordenar-select').value;
+            const grid = document.querySelector('.grid-productos');
+            const tarjetas = Array.from(grid.querySelectorAll('.producto-card'));
+
+            if (criterio === 'predeterminado') return;
+
+            tarjetas.sort((a, b) => {
+                const btnA = a.querySelector("button[onclick^='prepararAgregarCarrito']");
+                const btnB = b.querySelector("button[onclick^='prepararAgregarCarrito']");
+                
+                if (!btnA || !btnB) return 0;
+
+                const matchesA = btnA.getAttribute('onclick').match(/,\s*([0-9.]+),/);
+                const matchesB = btnB.getAttribute('onclick').match(/,\s*([0-9.]+),/);
+
+                const precioA = matchesA ? parseFloat(matchesA[1]) : 0;
+                const precioB = matchesB ? parseFloat(matchesB[1]) : 0;
+
+                if (criterio === 'menor-precio') return precioA - precioB;
+                if (criterio === 'mayor-precio') return precioB - precioA;
+                return 0;
+            });
+
+            tarjetas.forEach(tarjeta => grid.appendChild(tarjeta));
+        }
+
+        function limpiarTodosLosFiltros() {
+            document.querySelectorAll('.chk-categoria').forEach(cb => cb.checked = false);
+            document.getElementById('ordenar-select').value = 'predeterminado';
+            filtrarCatalogoCompleto();
+            ordenarProductos();
+        }
 
         function toggleModal(show) { document.getElementById('modal-personalizar').style.display = show ? 'flex' : 'none'; }
         function toggleCarrito() { document.getElementById('carrito-sidebar').classList.toggle('active'); }
@@ -281,11 +433,7 @@
         function eliminarDelCarrito(cartItemId) { carrito = carrito.filter(item => item.cartItemId !== cartItemId); actualizarCarritoHTML(); }
         function esUbicacionDoble() { const ubi = document.getElementById('custom-ubicacion').value; return (ubi === 'Adelante y Atras' || ubi === 'Ambas Mangas' || ubi === 'Ambas Piernas' || ubi === 'Ambos Lados'); }
         function esUbicacionCuadruple() { const ubi = document.getElementById('custom-ubicacion').value; return (ubi === 'Todos los lados'); }
-        function filtrarCategoria(categoria, boton) {
-            document.querySelectorAll('.btn-categoria').forEach(btn => btn.classList.remove('active'));
-            boton.classList.add('active');
-            document.querySelectorAll('.producto-card').forEach(card => { card.style.display = (categoria === 'todas' || card.getAttribute('data-categoria') === categoria) ? 'flex' : 'none'; });
-        }
+        
         function adaptarCamposDeTexto() {
             const ubi = document.getElementById('custom-ubicacion').value;
             const containerUnico = document.getElementById('campo-texto-unico');
@@ -305,10 +453,22 @@
         function abrirModalEstampado(cartItemId) {
             const item = carrito.find(i => i.cartItemId === cartItemId); if (!item) return;
             itemIdParaEstampar = cartItemId; document.getElementById('prenda-seleccionada-texto').innerText = `Aplicando a: ${item.nombre} (Talla ${item.talla})`;
-            const selectUbicacion = document.getElementById('custom-ubicacion'); selectUbicacion.innerHTML = '';
+            
+            const selectUbicacion = document.getElementById('custom-ubicacion'); 
+            selectUbicacion.innerHTML = '';
+            
             const nombreLower = item.nombre.toLowerCase(); const catLower = item.categoria.toLowerCase(); let opciones = [];
             if (nombreLower.includes('buzo') || nombreLower.includes('hoodie') || catLower.includes('buzo')) { opciones = [{ val: 'Adelante', txt: 'Solo Adelante' }, { val: 'Atras', txt: 'Solo Atrás' }, { val: 'Adelante y Atras', txt: 'Atrás y Adelante (Doble)' }, { val: 'Manga Derecha', txt: 'Solo Manga Derecha' }, { val: 'Manga Izquierda', txt: 'Solo Manga Izquierda' }, { val: 'Ambas Mangas', txt: 'Derecha e Izquierda (Mangas Doble)' }, { val: 'Todos los lados', txt: '🔥 Full Estampado (Todos los lados)' }]; } else if (nombreLower.includes('pantalon') || nombreLower.includes('jeans') || nombreLower.includes('jogger') || catLower.includes('pantalon')) { opciones = [{ val: 'Pierna Izquierda', txt: 'Pierna Izquierda' }, { val: 'Pierna Derecha', txt: 'Pierna Derecha' }, { val: 'Ambas Piernas', txt: 'Ambas Piernas (Doble)' }]; } else { opciones = [{ val: 'Pecho', txt: 'Estampado en el Pecho' }, { val: 'Atras', txt: 'Estampado Atrás' }, { val: 'Ambos Lados', txt: 'Pecho y Atrás (Ambos Doble)' }]; }
-            opciones.forEach(opt => { const el = document.createElement('option'); el.value = opt.val; el.textContent = opt.txt; selectUbicacion.appendChild(el); });
+            
+            opciones.forEach(opt => { 
+                const el = document.createElement('option'); 
+                el.value = opt.val; 
+                el.textContent = opt.txt; 
+                el.style.backgroundColor = "#09090b";
+                el.style.color = "#ffffff";
+                selectUbicacion.appendChild(el); 
+            });
+            
             imagenesDisenoActuales = []; document.getElementById('custom-texto-simple').value = ''; document.getElementById('custom-texto-ladoA').value = ''; document.getElementById('custom-texto-ladoB').value = ''; document.getElementById('custom-texto-todos-adelante').value = ''; document.getElementById('custom-texto-todos-atras').value = ''; document.getElementById('custom-texto-todos-mangaIzg').value = ''; document.getElementById('custom-texto-todos-mangaDer').value = ''; document.getElementById('custom-notas').value = '';
             if (item.estampado) {
                 document.getElementById('custom-ubicacion').value = item.estampado.ubicacion; adaptarCamposDeTexto();
@@ -351,25 +511,74 @@
             contenedor.innerHTML = ''; let subtotal = 0; let totalItems = 0;
             carrito.forEach(item => {
                 let precioItemTotal = item.precio; let infoEstampadoHTML = '';
-                if (item.estampado) { precioItemTotal += item.estampado.costoExtra; const totalFotosCargadas = item.estampado.imagenes ? item.estampado.imagenes.length : 0; infoEstampadoHTML = `<div style="background-color: var(--bg-elevated); padding: 0.5rem; border-radius: 0.25rem; margin-top: 0.5rem; font-size: 0.75rem; color: #f4f4f5; border-left: 2px solid var(--accent);">🎨 <strong>Zonas:</strong> ${item.estampado.ubicacion} (${item.estampado.color})<br>📝 <strong>Frase:</strong> ${item.estampado.texto}<br>📌 <strong>Notas:</strong> ${item.estampado.notas}<br>🖼️ <strong>Fotos añadidas:</strong> ${totalFotosCargadas} de 3</div>`; }
+                if (item.estampado) { precioItemTotal += item.estampado.costoExtra; const totalFotosCargadas = item.estampado.imagenes ? item.estampado.imagenes.length : 0; infoEstampadoHTML = `<div style="background-color: var(--bg-elevated); padding: 0.5rem; border-radius: 0.25rem; margin-top: 0.5rem; font-size: 0.75rem; color: #f4f4f5; border-left: 2px solid var(--accent);">🎨 <strong>Zonas:</strong> ${item.estampado.ubicacion} (${item.estampado.color})<br>📝 <strong>Frase:</strong> ${item.estampado.texto}<br>📌 <strong>Notas:</strong> ${item.estampado.notes}<br>🖼️ <strong>Fotos añadidas:</strong> ${totalFotosCargadas} de 3</div>`; }
                 subtotal += precioItemTotal * item.cantidad; totalItems += item.cantidad;
                 contenedor.innerHTML += `<div style="background-color: #000000; border: 1px solid var(--border-soft); padding: 0.85rem; border-radius: 0.5rem; display: flex; flex-direction: column; gap: 0.5rem;"><div style="display: flex; justify-content: space-between; align-items: flex-start;"><div style="max-width: 60%;"><p style="color: white; margin: 0; font-weight: bold; font-size: 0.85rem; text-transform: uppercase;">${item.nombre}</p><p style="color: var(--accent); margin: 0; font-size: 0.75rem; font-weight: 800;">Talla: ${item.talla}</p><p style="color: var(--text-muted); margin: 0.2rem 0 0 0; font-size: 0.8rem;">Und: $${precioItemTotal.toLocaleString('co')}</p></div><div style="display: flex; align-items: center; gap: 0.4rem;"><button onclick="cambiarCantidad('${item.cartItemId}', -1)" class="btn-qty">-</button><span style="color: white; font-weight: bold; font-size: 0.9rem; min-width: 15px; text-align: center;">${item.cantidad}</span><button onclick="cambiarCantidad('${item.cartItemId}', 1)" class="btn-qty">+</button><button onclick="eliminarDelCarrito('${item.cartItemId}')" class="btn-delete-cart" title="Eliminar del carrito">🗑️</button></div></div>${infoEstampadoHTML}<div style="text-align: right; margin-top: 0.2rem;"><button onclick="abrirModalEstampado('${item.cartItemId}')" style="background: none; border: none; color: #38bdf8; font-size: 0.75rem; font-weight: bold; cursor: pointer; text-transform: uppercase; padding: 0;">${item.estampado ? '✏️ Modificar Diseño' : '🎨 Configurar Estampados'}</button></div></div>`;
             });
             let valorDescuento = subtotal * descuentoPorcentaje; let subtotalConDescuento = subtotal - valorDescuento; let costoEnvio = subtotal > 0 ? (document.getElementById('selector-envio').value === 'bogota' ? 6000 : 12000) : 0;
             totalHTML.innerText = '$' + (subtotalConDescuento + costoEnvio).toLocaleString('co'); contador.innerText = totalItems;
         }
+        
+        // 📍 FUNCIÓN DE COMPRA COMPLETAMENTE ACTUALIZADA CON DIRECCIÓN DE ENVÍO
         function procesarCompra() {
             if (carrito.length === 0) { alert('El carrito está vacío.'); return; }
+            
+            // Validamos que se ingrese la dirección
+            const direccionInput = document.getElementById('input-direccion').value.trim();
+            if (direccionInput === "") { 
+                alert('Por favor, ingresa tu dirección de envío para saber a dónde despachar tu pedido.'); 
+                document.getElementById('input-direccion').focus();
+                return; 
+            }
+
             const formData = new FormData();
-            let detallesPedido = carrito.map(item => { let estInfo = item.estampado ? ` [Ubicación: ${item.estampado.ubicacion}, Detalles: ${item.estampado.texto}, Notas: ${item.estampado.notas}]` : ''; return `${item.nombre} (Talla: ${item.talla})${estInfo} x${item.cantidad}`; }).join(' | ');
-            let subtotalCalculado = 0; carrito.forEach(item => { subtotalCalculado += (item.precio + (item.estampado ? item.estampado.costoExtra : 0)) * item.cantidad; });
-            let valorDescuento = subtotalCalculado * descuentoPorcentaje; let subtotalConDescuento = subtotalCalculado - valorDescuento; let costoEnvio = document.getElementById('selector-envio').value === 'bogota' ? 6000 : 12000;
+            
+            // Obtenemos el texto de la ciudad seleccionada
+            const selectCiudad = document.getElementById('selector-envio');
+            const ciudadTexto = selectCiudad.options[selectCiudad.selectedIndex].text;
+
+            // Almacenamos la ubicación completa al inicio del string 'detalles'
+            let detallesPedido = `📍 ENVÍO A: ${ciudadTexto} - DIRECCIÓN: ${direccionInput} | `;
+            
+            // Añadimos los productos del carrito
+            detallesPedido += carrito.map(item => { 
+                let estInfo = item.estampado ? ` [Ubicación: ${item.estampado.ubicacion}, Detalles: ${item.estampado.texto}, Notas: ${item.estampado.notas}]` : ''; 
+                return `${item.nombre} (Talla: ${item.talla})${estInfo} x${item.cantidad}`; 
+            }).join(' | ');
+
+            let subtotalCalculado = 0; 
+            carrito.forEach(item => { subtotalCalculado += (item.precio + (item.estampado ? item.estampado.costoExtra : 0)) * item.cantidad; });
+            
+            let valorDescuento = subtotalCalculado * descuentoPorcentaje; 
+            let subtotalConDescuento = subtotalCalculado - valorDescuento; 
+            let costoEnvio = document.getElementById('selector-envio').value === 'bogota' ? 6000 : 12000;
+            
             if (cuponAplicadoCodigo !== "") { detallesPedido += ` | [Cupón Aplicado: ${cuponAplicadoCodigo}]`; }
-            formData.append('detalles', detallesPedido); formData.append('total', subtotalConDescuento + costoEnvio);
-            carrito.forEach((item) => { if (item.estampado && item.estampado.imagenes) { item.estampado.imagenes.forEach((imagen) => { if (imagen instanceof File) { formData.append(`disonos_${item.id}[]`, imagen); } }); } });
+            
+            formData.append('detalles', detallesPedido); 
+            formData.append('total', subtotalConDescuento + costoEnvio);
+            
+            carrito.forEach((item) => { 
+                if (item.estampado && item.estampado.imagenes) { 
+                    item.estampado.imagenes.forEach((imagen) => { 
+                        if (imagen instanceof File) { formData.append(`disonos_${item.id}[]`, imagen); } 
+                    }); 
+                } 
+            });
+            
             fetch('/pedidos', { method: "POST", headers: { "X-CSRF-TOKEN": "{{ csrf_token() }}" }, body: formData })
             .then(res => { if (!res.ok) { throw new Error("HTTP error " + res.status); } return res.json(); })
-            .then(data => { if (data.success) { alert('¡Su orden avanzada fue enviada a NowStyle! 🚀🔥'); carrito = []; actualizarCarritoHTML(); window.location.href = "{{ route('pedido.index') }}"; } else { alert('Error del servidor al guardar orden: ' + data.error); } })
+            .then(data => { 
+                if (data.success) { 
+                    alert('¡Su orden avanzada fue enviada a NowStyle! 🚀🔥'); 
+                    carrito = []; 
+                    actualizarCarritoHTML(); 
+                    document.getElementById('input-direccion').value = ""; // Limpiamos el campo
+                    window.location.href = "{{ route('pedido.index') }}"; 
+                } else { 
+                    alert('Error del servidor al guardar orden: ' + data.error); 
+                } 
+            })
             .catch((error) => { console.error("Fallo:", error); alert('Error real: ' + error.message); });
         }
     </script>

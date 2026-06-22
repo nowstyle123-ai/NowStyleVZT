@@ -9,14 +9,17 @@ class Producto extends Model
 {
     use HasFactory;
 
-    protected $fillable = [
-        'codigo_barras',
-        'nombre',
-        'descripcion',
-        'precio',
-        'stock',
-        'talla',
-        'categoria',
-        'imagen' 
-    ];
+   protected $fillable = ['nombre', 
+   'descripcion',
+    'precio', 
+    'stock', 
+    'tallas', 
+    'categoria', 
+    'imagen',
+     'codigo_barras'];
+
+// Esto le dice a Laravel que "tallas" se guarda como JSON pero lo usas como Array
+protected $casts = [
+    'tallas' => 'array',
+];
 }

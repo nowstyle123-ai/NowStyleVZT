@@ -19,25 +19,36 @@ class ProductoController extends Controller
     }
 
     public function store(Request $request)
-    {
-        $datos = $request->validate([
-            'nombre'        => 'required|string|max:255',
-            'descripcion'   => 'nullable|string',
-            'precio'        => 'required|numeric|min:0',
-            'stock'         => 'required|integer|min:0',
-            'talla'         => 'nullable|string',
-            'categoria'     => 'required|string',
-            'codigo_barras' => 'nullable|string',
-        ]);
+{
+    $request->validate([
+        'nombre'        => 'required|string|max:255',
+        'descripcion'   => 'nullable|string',
+        'precio'        => 'required|numeric|min:0',
+        'stock'         => 'required|integer|min:0',
+        'tallas'        => 'required|array', // Recibe el array de checkboxes de la vista
+        'categoria'     => 'required|string',
+        'codigo_barras' => 'nullable|string',
+    ]);
 
-        if ($request->hasFile('imagen')) {
-            $datos['imagen'] = $request->file('imagen')->store('productos', 'public');
-        }
-
-        Producto::create($datos);
-
-        return redirect()->route('productos.index');
+    $rutaImagen = null;
+    if ($request->hasFile('imagen')) {
+        $rutaImagen = $request->file('imagen')->store('productos', 'public');
     }
+
+    // CREA UN SOLO PRODUCTO
+    Producto::create([
+        'nombre'        => $request->nombre,
+        'descripcion'   => $request->descripcion,
+        'precio'        => $request->precio,
+        'stock'         => $request->stock,
+        'tallas'        => $request->tallas, // Guarda el array completo directamente gracias al cast
+        'categoria'     => $request->categoria,
+        'codigo_barras' => $request->codigo_barras,
+        'imagen'        => $rutaImagen,
+    ]);
+
+    return redirect()->route('productos.index')->with('success', '¡Producto creado exitosamente con todas sus tallas!');
+}
 
     public function show(string $id)
     {
@@ -94,28 +105,41 @@ class ProductoController extends Controller
     // ==========================================
     public function storeCelular(Request $request)
     {
-        $producto = new Producto();
-
-        $producto->nombre = $request->input('nombre');
-        $producto->descripcion = $request->input('descripcion');
-        $producto->precio = $request->input('precio');
-        $producto->stock = $request->input('stock');
-        $producto->talla = $request->input('talla');
-        $producto->categoria = $request->input('categoria');
-
+        // Subir la foto una sola vez
+        $rutaFoto = null;
         if ($request->hasFile('imagen')) {
             $rutaFoto = $request->file('imagen')->store('productos', 'public');
-            $producto->imagen = $rutaFoto;
-        } else {
-            $producto->imagen = null;
         }
 
-        $producto->save();
+        // CORRECCIÓN: Soportar tanto si el celular manda una sola talla string como si manda un array de tallas
+        $tallas = $request->input('tallas');
+        
+        if (!is_array($tallas)) {
+            // Si mandó solo un string (ej: "M"), lo convertimos en array para que el flujo sea idéntico
+            $tallas = [$request->input('talla', 'M')];
+        }
+
+        $productosCreados = [];
+
+        foreach ($tallas as $talla) {
+            $producto = new Producto();
+            $producto->nombre = $request->input('nombre');
+            $producto->descripcion = $request->input('descripcion');
+            $producto->precio = $request->input('precio');
+            $producto->stock = $request->input('stock');
+            $producto->talla = $talla; // Asignamos la talla correspondiente
+            $producto->categoria = $request->input('categoria');
+            $producto->codigo_barras = $request->input('codigo_barras');
+            $producto->imagen = $rutaFoto;
+            $producto->save();
+
+            $productosCreados[] = $producto;
+        }
 
         return response()->json([
             'success' => true,
-            'message' => '¡Producto guardado desde el celular!',
-            'data' => $producto
+            'message' => '¡Productos guardados correctamente desde el celular!',
+            'data' => $productosCreados
         ], 201);
     }
 }

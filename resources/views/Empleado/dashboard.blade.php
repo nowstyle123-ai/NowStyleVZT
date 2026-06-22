@@ -198,17 +198,23 @@
                     </div>
                 @endif
 
-                <div class="tab-nav">
-                    <button class="tab-button active" onclick="cambiarPestaña('pestaña-metricas', this)">
-                        📊 Métricas y Caja
-                    </button>
-                    <button class="tab-button" onclick="cambiarPestaña('pestaña-estampados', this)">
-                        ⚡ Cola de Estampados ({{ $pedidos->count() }})
-                    </button>
-                    <button class="tab-button" onclick="cambiarPestaña('pestaña-catalogo', this)">
-                        👕 Catálogo Comercial ({{ $productos->count() }})
-                    </button>
-                </div>
+               <div class="tab-nav">
+                  <button class="tab-button active" onclick="cambiarPestaña('pestaña-metricas', this)">
+                      📊 Métricas y Caja
+                  </button>
+                  <button class="tab-button" onclick="cambiarPestaña('pestaña-estampados', this)">
+                      ⚡ Cola de Estampados ({{ $pedidos->count() }})
+                  </button>
+                  <button class="tab-button" onclick="cambiarPestaña('pestaña-catalogo', this)">
+                      👕 Catálogo Comercial ({{ $productos->count() }})
+                  </button>
+    
+                  @if(Auth::user()->rol === 'gerente' || Auth::user()->rol === 'empleado')
+                      <button class="tab-button" onclick="cambiarPestaña('pestaña-reportes', this)" style="border-left: 2px solid #dc2626; padding-left: 1rem;">
+                          📈 Reportes de Ventas
+                      </button>
+                  @endif
+               </div>
 
                 <div id="pestaña-metricas" class="tab-content active">
                     <div style="display: flex; flex-direction: column; gap: 2.5rem;">
@@ -375,14 +381,11 @@
                                                 <span style="background-color: rgba(255,255,255,0.04); padding: 0.2rem 0.4rem; border-radius: 0.25rem; color: #ffffff; font-size: 0.7rem; font-weight: 800;">
                                                     Talla: {{ $producto->talla ?? 'Única' }}
                                                 </span>
-                                                
-                                                <!-- MEJORA: Indicador de stock disponible por prenda -->
                                                 <span style="background-color: rgba(255,255,255,0.04); padding: 0.2rem 0.4rem; border-radius: 0.25rem; color: #a1a1aa; font-size: 0.7rem; font-weight: 800;">
                                                     Stock: {{ $producto->stock ?? 0 }} uds
                                                 </span>
                                             </div>
 
-                                            <!-- MEJORA: Alerta visual interna de bajo stock si es <= 10 -->
                                             @if(isset($producto->stock) && $producto->stock <= 10)
                                                 <div style="margin-top: 0.35rem; display: inline-flex; align-items: center; gap: 0.25rem; color: #ef4444; background: rgba(239, 68, 68, 0.1); padding: 0.25rem 0.5rem; border-radius: 0.375rem; font-size: 0.68rem; font-weight: 800; text-transform: uppercase; width: fit-content; border: 1px solid rgba(239, 68, 68, 0.2);">
                                                     ⚠️ ¡Stock Crítico!
@@ -417,6 +420,49 @@
                     @endif
                 </div>
 
+                <div id="pestaña-reportes" class="tab-content">
+                    <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1.5rem;">
+                        <span style="font-size: 1.2rem; color: #dc2626;">📈</span>
+                        <h3 style="text-transform: uppercase; font-size: 1.1rem; font-weight: 900; color: #ffffff; margin: 0; letter-spacing: 0.03em;">
+                            Historial Global de Ventas y Pedidos
+                        </h3>
+                    </div>
+
+                    <div class="card-panel" style="padding: 2rem;">
+                        <div style="overflow-x: auto;">
+                            <table class="table-nowstyle" style="width: 100%; border-collapse: collapse; text-align: left;">
+                                <thead>
+                                    <tr>
+                                        <th>ID Pedido</th>
+                                        <th>Cliente</th>
+                                        <th>Fecha</th>
+                                        <th>Total</th>
+                                    </tr>
+                                </thead>
+                                <tbody style="font-size: 0.88rem; color: #ffffff;">
+                                    @forelse($ultimasVentas as $venta)
+                                        <tr style="transition: background-color 0.15s ease;">
+                                            <td style="font-weight: 800; color: #3f3f46;">#{{ $venta->id }}</td>
+                                            <td style="font-weight: 700; color: #ffffff;">{{ $venta->cliente_nombre }}</td>
+                                            <td style="color: #71717a;">{{ date('d M Y', strtotime($venta->created_at)) }}</td>
+                                            <td style="font-weight: 900; color: #25d366; font-size: 0.95rem;">
+                                                ${{ number_format($venta->total, 0, ',', '.') }}
+                                            </td>
+                                        </tr>
+                                    @empty
+                                        <tr>
+                                            <td colspan="4" style="text-align: center; color: #71717a; padding: 3.5rem;">
+                                                <span style="font-size: 2rem; display: block; margin-bottom: 0.5rem;">📊</span>
+                                                <p style="margin: 0; font-size: 0.9rem; text-transform: uppercase; font-weight: 800;">No hay ventas registradas en la base de datos</p>
+                                            </td>
+                                        </tr>
+                                    @endforelse
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
             </div>
         </div>
     </div>
@@ -431,15 +477,19 @@
             const botones = document.querySelectorAll('.tab-button');
             botones.forEach(btn => btn.classList.remove('active'));
 
-            document.getElementById(idPestaña).classList.add('active');
+            const target = document.getElementById(idPestaña);
+            if(target) {
+                target.classList.add('active');
+            }
             botonActivo.classList.add('active');
         }
 
         // --- 2. FUNCIÓN PARA LAS NOTIFICACIONES FLOTANTES (TOASTS) ---
         function mostrarNotificacion(mensaje, tipo = 'success') {
             const container = document.getElementById('toast-container');
-            const toast = document.createElement('div');
+            if(!container) return;
             
+            const toast = document.createElement('div');
             const colorBorde = tipo === 'success' ? '#25d366' : '#dc2626';
             const fondo = '#09090b';
 
@@ -477,32 +527,35 @@
         }
 
         // --- 3. EVENTO DEL LECTOR DE CÓDIGO DE BARRAS REAL ---
-        document.getElementById('lector-barra').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                e.preventDefault();
-                let codigo = this.value.trim();
-                if (codigo === '') return;
+        const lector = document.getElementById('lector-barra');
+        if(lector) {
+            lector.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    let codigo = this.value.trim();
+                    if (codigo === '') return;
 
-                fetch(`/buscar-producto/${codigo}`)
-                    .then(response => response.json())
-                    .then(producto => {
-                        if (producto.success) {
-                            const precioFormateado = new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', maximumFractionDigits: 0 }).format(producto.precio);
-                            mostrarNotificacion(`👕 ${producto.nombre} agregado (${precioFormateado})`, 'success');
-                            document.getElementById('lector-barra').value = ''; 
-                            
-                            setTimeout(() => location.reload(), 1000);
-                        } else {
-                            mostrarNotificacion('⚠ El producto no está registrado', 'error');
-                            document.getElementById('lector-barra').value = '';
-                        }
-                    })
-                    .catch(error => {
-                        console.error(error);
-                        mostrarNotificacion('Error de red en el servidor', 'error');
-                    });
-            }
-        });
+                    fetch(`/buscar-producto/${codigo}`)
+                        .then(response => response.json())
+                        .then(producto => {
+                            if (producto.success) {
+                                const precioFormateado = new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', maximumFractionDigits: 0 }).format(producto.precio);
+                                mostrarNotificacion(`👕 ${producto.nombre} agregado (${precioFormateado})`, 'success');
+                                lector.value = ''; 
+                                
+                                setTimeout(() => location.reload(), 1000);
+                            } else {
+                                mostrarNotificacion('⚠ El producto no está registrado', 'error');
+                                lector.value = '';
+                            }
+                        })
+                        .catch(error => {
+                            console.error(error);
+                            mostrarNotificacion('Error de red en el servidor', 'error');
+                        });
+                }
+            });
+        }
 
         // --- 4. PROCESAMIENTO Y GENERACIÓN DE LA GRÁFICA (CHART.JS) ---
         @php
@@ -519,52 +572,55 @@
         const etiquetas = {!! json_encode($nombresCategorias) !!};
         const datos = {!! json_encode($cantidadesCategorias) !!};
 
-        const ctx = document.getElementById('graficaCategorias').getContext('2d');
-        new Chart(ctx, {
-            type: 'doughnut',
-            data: {
-                labels: etiquetas,
-                datasets: [{
-                    data: datos,
-                    backgroundColor: [
-                        '#dc2626', 
-                        '#25d366', 
-                        '#3b82f6', 
-                        '#a855f7', 
-                        '#eab308'  
-                    ],
-                    borderColor: '#09090b',
-                    borderWidth: 4
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: true,
-                plugins: {
-                    legend: {
-                        position: 'bottom',
-                        labels: {
-                            color: '#71717a',
-                            boxWidth: 10,
-                            boxHeight: 10,
-                            padding: 10,
-                            font: {
-                                weight: 'bold',
+        const canvas = document.getElementById('graficaCategorias');
+        if(canvas) {
+            const ctx = canvas.getContext('2d');
+            new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: etiquetas,
+                    datasets: [{
+                        data: datos,
+                        backgroundColor: [
+                            '#dc2626', 
+                            '#25d366', 
+                            '#3b82f6', 
+                            '#a855f7', 
+                            '#eab308'  
+                        ],
+                        borderColor: '#09090b',
+                        borderWidth: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                color: '#71717a',
+                                boxWidth: 10,
+                                boxHeight: 10,
+                                padding: 10,
+                                font: {
+                                    weight: 'bold',
                                 size: 10,
-                                family: 'sans-serif'
+                                    family: 'sans-serif'
+                                }
                             }
                         }
-                    }
-                },
-                cutout: '75%'
-            }
-        });
+                    },
+                    cutout: '75%'
+                }
+            });
+        }
 
         // --- 5. ALERTA AUTOMÁTICA DE BAJO STOCK ---
         document.addEventListener("DOMContentLoaded", function() {
             @foreach($productos as $producto)
                 @if(isset($producto->stock) && $producto->stock <= 10)
-                    mostrarNotificacion("⚠ BAJO STOCK: El producto '{{ $producto->nombre }}' tiene solo {{ $producto->stock }} unidades.", "error");
+                    mostrarNotificacion("⚠ BAJO STOCK: El producto '{{ addslashes($producto->nombre) }}' tiene solo {{ $producto->stock }} unidades.", "error");
                 @endif
             @endforeach
         });

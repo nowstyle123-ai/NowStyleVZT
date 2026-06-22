@@ -40,7 +40,7 @@
 
                         <div style="background-color: #000000; height: 180px; border-radius: 0.75rem; border: 1px solid #18181b; display: flex; align-items: center; justify-content: center; margin-bottom: 1rem; overflow: hidden;">
                             @if($producto->imagen)
-                                <img src="{{ asset('storage/' . $producto->imagen) }}" alt="Imagen del producto">
+                                <img src="{{ asset('storage/' . $producto->imagen) }}" alt="Imagen del producto" style="max-height: 100%; max-width: 100%; object-fit: contain;">
                             @else
                                 <span style="color: #4b5563; font-size: 0.8rem; font-weight: bold; text-transform: uppercase;">Sin Foto</span>
                             @endif
@@ -56,14 +56,23 @@
                             </p>
                         </div>
 
-                        <div style="padding-left: 0.5rem; border-top: 1px solid #18181b; padding-top: 1rem; display: flex; justify-content: space-between; align-items: center;">
-                            <span style="font-size: 1.3rem; font-weight: 900; color: #ffffff;">
-                                COP ${{ number_format($producto->precio, 0, ',', '.') }}
-                            </span>
+                        <div style="padding-left: 0.5rem; border-top: 1px solid #18181b; padding-top: 1rem; display: flex; flex-direction: column; gap: 0.75rem;">
+                            
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <span style="font-size: 1.3rem; font-weight: 900; color: #ffffff;">
+                                    COP ${{ number_format($producto->precio, 0, ',', '.') }}
+                                </span>
+                            </div>
 
-                            <span style="font-size: 0.75rem; font-weight: bold; text-transform: uppercase; background-color: #18181b; padding: 0.35rem 0.75rem; border-radius: 2rem; border: 1px solid #27272a; color: #a1a1aa;">
-                                Stock: {{ $producto->stock }}
-                            </span>
+                            <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                                <span style="font-size: 0.75rem; font-weight: bold; text-transform: uppercase; background-color: #18181b; padding: 0.35rem 0.75rem; border-radius: 2rem; border: 1px solid #27272a; color: #ffffff;">
+                                    Tallas: {{ is_array($producto->tallas) ? implode(', ', $producto->tallas) : $producto->tallas }}
+                                </span>
+
+                                <span style="font-size: 0.75rem; font-weight: bold; text-transform: uppercase; background-color: #18181b; padding: 0.35rem 0.75rem; border-radius: 2rem; border: 1px solid #27272a; color: #a1a1aa;">
+                                    Stock: {{ $producto->stock }}
+                                </span>
+                            </div>
                         </div>
 
                         <div style="display: flex; gap: 0.5rem; margin-top: 1.25rem; padding-top: 1rem; border-top: 1px dashed #27272a;">

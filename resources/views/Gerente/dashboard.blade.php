@@ -103,6 +103,7 @@
             }
             .btn-action-dark:hover {
                 background-color: #27272a;
+                border-color: #3f3f46;
             }
             .btn-danger-outline {
                 background-color: rgba(220, 38, 38, 0.08);
@@ -137,6 +138,9 @@
                 border-bottom: 1px solid #1c1c1e;
                 color: #ffffff !important;
             }
+            .table-nowstyle tr:hover td {
+                background-color: rgba(255, 255, 255, 0.01);
+            }
 
             /* Selectores Estilo Form */
             #empleado-container select {
@@ -166,9 +170,7 @@
                 border: 1px solid #1c1c1e;
                 border-radius: 0.75rem;
                 padding: 1.25rem;
-                display: flex;
-                flex-direction: column;
-                justify-content: space-between;
+                display: flex; flex-direction: column; justify-content: space-between;
                 transition: border-color 0.2s ease, transform 0.2s ease;
             }
             .product-card:hover {
@@ -216,36 +218,38 @@
             }
         </style>
 
-        <!-- Barra de Navegación / Encabezado Superior -->
-        <div style="background-color: #09090b; border-bottom: 1px solid #1c1c1e; padding: 1.25rem 2rem;">
-            <div style="max-width: 1280px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
-                <div style="display: flex; align-items: center; gap: 0.75rem;">
-                    <span style="background-color: rgba(220, 38, 38, 0.1); color: #dc2626; padding: 0.5rem; border-radius: 0.5rem; font-weight: bold; font-size: 1.1rem;">💼</span>
-                    <h2 style="font-weight: 900; font-size: 1.35rem; text-transform: uppercase; color: #ffffff; margin: 0; letter-spacing: 0.03em;">
-                        Inicio - Panel Gerente
-                    </h2>
-                </div>
-                
-                <div style="display: flex; gap: 0.75rem; align-items: center;">
-                    <a href="{{ route('cliente.index') }}" class="btn-secondary">
-                        🛒 Ir a la Tienda
-                    </a>
-                    <a href="{{ route('productos.create') }}" class="btn-primary">
-                        ➕ Crear Producto
-                    </a>
-                </div>
-            </div>
+       <div style="background-color: #09090b; border-bottom: 1px solid #1c1c1e; padding: 1.25rem 2rem;">
+    <div style="max-width: 1280px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+        
+        <div style="display: flex; align-items: center; gap: 0.75rem;">
+            <span style="background-color: rgba(220, 38, 38, 0.1); color: #dc2626; padding: 0.5rem; border-radius: 0.5rem; font-weight: bold; font-size: 1.1rem;">💼</span>
+            <h2 style="font-weight: 900; font-size: 1.35rem; text-transform: uppercase; color: #ffffff; margin: 0; letter-spacing: 0.03em;">
+                Inicio - Panel Gerente
+            </h2>
+        </div>
+        
+        <div style="display: flex; gap: 0.75rem; align-items: center;">
+            <a href="{{ route('reportes.index') }}" class="btn-secondary" style="border-color: #dc2626; color: #ef4444; text-decoration: none;">
+                📈 Ver Reportes Avanzados
+            </a>
+            
+            <a href="{{ route('cliente.index') }}" class="btn-secondary">
+                🛒 Ir a la Tienda
+            </a>
+            <a href="{{ route('productos.create') }}" class="btn-primary">
+                ➕ Crear Producto
+            </a>
         </div>
 
-        <!-- Contenedor del Cuerpo Principal -->
+    </div>
+</div>
+
         <div style="max-width: 1280px; margin: 2rem auto 0 auto; width: 100%; padding: 0 2rem; box-sizing: border-box; display: flex; flex-direction: column;">
             
-            <!-- Notificación de Alerta de Sesión Activa -->
             <div style="background-color: rgba(37, 211, 102, 0.1); border-left: 4px solid #25d366; color: #25d366; padding: 1rem 1.5rem; border-radius: 0.5rem; font-weight: bold; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 0.02em; margin-bottom: 2rem;">
                 🚀 @if(session('success')) {{ session('success') }} @else Has iniciado sesión como Administrador General @endif
             </div>
 
-            <!-- Sistema de Navegación de Pestañas (Tabs) -->
             <div class="tab-nav">
                 <button class="tab-button active" onclick="switchTab(event, 'roles')">🛡️ Control de Roles</button>
                 <button class="tab-button" onclick="switchTab(event, 'analiticas')">📊 Analíticas Generales</button>
@@ -253,7 +257,6 @@
                 <button class="tab-button" onclick="switchTab(event, 'pedidos')">📦 Pedidos del Sistema</button>
             </div>
 
-            <!-- PESTAÑA 1: CONTROL DE ROLES -->
             <div id="roles" class="tab-content active">
                 <div style="background-color: #09090b; border: 1px solid #1c1c1e; border-radius: 0.75rem; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.3);">
                     <table class="table-nowstyle" style="width: 100%; border-collapse: collapse; text-align: left; min-width: 600px;">
@@ -266,7 +269,7 @@
                             </tr>
                         </thead>
                         <tbody style="font-size: 0.88rem;">
-                            @foreach($usuarios as $usuario)
+                            @forelse($usuarios as $usuario)
                             <tr style="transition: background-color 0.15s ease;">
                                 <td style="font-weight: 700; color: #ffffff;">{{ $usuario->name }}</td>
                                 <td style="color: #a1a1aa;">{{ $usuario->email }}</td>
@@ -280,44 +283,42 @@
                                         @csrf
                                         @method('PATCH')
                                         
-                                        <!-- Ajustado a opción 'usuario' -->
-                                        <select name="rol">
+                                        <select name="rol" onchange="this.form.submit()">
                                             <option value="usuario" {{ $usuario->rol == 'usuario' ? 'selected' : '' }}>Usuario</option>
                                             <option value="empleado" {{ $usuario->rol == 'empleado' ? 'selected' : '' }}>Empleado</option>
                                             <option value="gerente" {{ $usuario->rol == 'gerente' ? 'selected' : '' }}>Gerente</option>
                                         </select>
-
-                                        <button type="submit" class="btn-action-dark">
-                                            Cambiar
-                                        </button>
                                     </form>
                                 </td>
                             </tr>
-                            @endforeach
+                            @empty
+                            <tr>
+                                <td colspan="4" style="text-align: center; color: #71717a; padding: 3rem;">No hay usuarios registrados.</td>
+                            </tr>
+                            @endforelse
                         </tbody>
                     </table>
                 </div>
             </div>
 
-            <!-- PESTAÑA 2: ANALÍTICAS GENERALES -->
             <div id="analiticas" class="tab-content">
                 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.5rem; margin-bottom: 2.5rem;">
                     <div style="background-color: #09090b; border: 1px solid #1c1c1e; padding: 1.5rem; border-radius: 0.75rem; display: flex; align-items: center; gap: 1rem;">
-                        <span style="font-size: 2rem; background-color: rgba(37, 211, 102, 0.1); padding: 0.5rem; border-radius: 0.5rem;">💰</span>
+                        <span style="font-size: 2rem; background-color: rgba(37, 211, 102, 0.1); padding: 0.5rem; border-radius: 0.5rem; line-height: 1;">💰</span>
                         <div>
                             <p style="margin: 0; color: #71717a; font-size: 0.75rem; font-weight: bold; text-transform: uppercase;">Ingresos Totales</p>
                             <h3 style="margin: 0; font-size: 1.5rem; font-weight: 900; color: #25d366;">${{ number_format($totalVentas ?? 0, 0, ',', '.') }}</h3>
                         </div>
                     </div>
                     <div style="background-color: #09090b; border: 1px solid #1c1c1e; padding: 1.5rem; border-radius: 0.75rem; display: flex; align-items: center; gap: 1rem;">
-                        <span style="font-size: 2rem; background-color: rgba(59, 130, 246, 0.1); padding: 0.5rem; border-radius: 0.5rem;">Box</span>
+                        <span style="font-size: 2rem; background-color: rgba(59, 130, 246, 0.1); padding: 0.5rem; border-radius: 0.5rem; line-height: 1;">📦</span>
                         <div>
                             <p style="margin: 0; color: #71717a; font-size: 0.75rem; font-weight: bold; text-transform: uppercase;">Pedidos Procesados</p>
                             <h3 style="margin: 0; font-size: 1.5rem; font-weight: 900; color: #3b82f6;">{{ $totalPedidos ?? 0 }} Órdenes</h3>
                         </div>
                     </div>
                     <div style="background-color: #09090b; border: 1px solid #1c1c1e; padding: 1.5rem; border-radius: 0.75rem; display: flex; align-items: center; gap: 1rem;">
-                        <span style="font-size: 2rem; background-color: rgba(220, 38, 38, 0.1); padding: 0.5rem; border-radius: 0.5rem;">⚠</span>
+                        <span style="font-size: 2rem; background-color: rgba(220, 38, 38, 0.1); padding: 0.5rem; border-radius: 0.5rem; line-height: 1;">⚠️</span>
                         <div>
                             <p style="margin: 0; color: #71717a; font-size: 0.75rem; font-weight: bold; text-transform: uppercase;">Productos Bajo Stock</p>
                             <h3 style="margin: 0; font-size: 1.5rem; font-weight: 900; color: #dc2626;">{{ $productosBajoStock ?? 0 }} Alertas</h3>
@@ -325,7 +326,6 @@
                     </div>
                 </div>
 
-                <!-- Control y Mapeo del Personal Corporativo -->
                 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 2rem; margin-bottom: 2.5rem; align-items: start;">
                     
                     <div style="background-color: #09090b; border: 1px solid #1c1c1e; padding: 2rem; border-radius: 0.75rem; height: 100%; box-sizing: border-box;">
@@ -354,7 +354,6 @@
                                 </span>
                             </div>
 
-                            <!-- Corregido a Usuarios en Base -->
                             <div style="display: flex; justify-content: space-between; align-items: center; background-color: #121214; padding: 1rem; border-radius: 0.5rem; border: 1px solid #1c1c1e;">
                                 <div style="display: flex; align-items: center; gap: 0.75rem;">
                                     <span style="font-size: 1.25rem; background-color: rgba(59, 130, 246, 0.1); padding: 0.4rem; border-radius: 0.375rem;">🛍</span>
@@ -376,7 +375,6 @@
                 </div>
             </div>
 
-            <!-- PESTAÑA 3: INVENTARIO GLOBAL -->
             <div id="inventario" class="tab-content">
                 @if($productos->isEmpty())
                     <div style="background-color: #09090b; border: 1px dashed #27272a; border-radius: 1rem; padding: 3.5rem; text-align: center; color: #71717a;">
@@ -404,6 +402,9 @@
                                             <span style="background-color: #121214; padding: 0.2rem 0.5rem; border-radius: 0.25rem; border: 1px solid #1c1c1e; color: #a1a1aa; font-size: 0.68rem; text-transform: uppercase; font-weight: 700;">
                                                 Stock: {{ $producto->stock ?? 0 }} uds
                                             </span>
+                                            @if(($producto->stock ?? 0) <= 10)
+                                                <span style="background-color: rgba(220, 38, 38, 0.1); color: #dc2626; padding: 0.2rem 0.4rem; border-radius: 0.25rem; font-size: 0.65rem; font-weight: bold; text-transform: uppercase;">Crítico</span>
+                                            @endif
                                         </div>
                                     </div>
                                 </div>
@@ -429,7 +430,6 @@
                 @endif
             </div>
 
-            <!-- PESTAÑA 4: PEDIDOS DEL SISTEMA -->
             <div id="pedidos" class="tab-content">
                 @if(isset($pedidos) && !$pedidos->isEmpty())
                     <div style="background-color: #09090b; border: 1px solid #1c1c1e; border-radius: 0.75rem; overflow: hidden;">
@@ -460,11 +460,10 @@
                                             <form action="{{ route('pedidos.updateEstado', $pedido->id) }}" method="POST" style="margin: 0; display: inline-flex; gap: 0.4rem;">
                                                 @csrf
                                                 @method('PATCH')
-                                                <select name="estado">
+                                                <select name="estado" onchange="this.form.submit()">
                                                     <option value="pendiente" {{ $pedido->estado == 'pendiente' ? 'selected' : '' }}>Pendiente</option>
                                                     <option value="completado" {{ $pedido->estado == 'completado' ? 'selected' : '' }}>Completado</option>
                                                 </select>
-                                                <button type="submit" class="btn-action-dark">OK</button>
                                             </form>
                                         </td>
                                     </tr>
@@ -515,8 +514,23 @@
         }
 
         document.addEventListener("DOMContentLoaded", function() {
-            const etiquetas = {!! json_encode(array_keys($cantidadesCategorias ?? [])) !!};
-            const datos = {!! json_encode(array_values($cantidadesCategorias ?? [])) !!};
+            @php
+                if (!isset($cantidadesCategorias) && isset($productos)) {
+                    $agrupados = $productos->groupBy('categoria');
+                    $labels = [];
+                    $data = [];
+                    foreach($agrupados as $cat => $items) {
+                        $labels[] = $cat ? strtoupper($cat) : 'GENERAL';
+                        $data[] = $items->count();
+                    }
+                } else {
+                    $labels = array_keys($cantidadesCategorias ?? []);
+                    $data = array_values($cantidadesCategorias ?? []);
+                }
+            @endphp
+
+            const etiquetas = {!! json_encode($labels) !!};
+            const datos = {!! json_encode($data) !!};
             const canvasElement = document.getElementById('graficaCategorias');
 
             if(canvasElement && etiquetas.length > 0) {
@@ -540,11 +554,10 @@
                 });
             }
 
-            // --- CORRECCIÓN DE LA CONDICIÓN DE STOCK CRÍTICO (<= 10) ---
             @if(isset($productos))
                 @foreach($productos as $producto)
                     @if(isset($producto->stock) && $producto->stock <= 10)
-                        mostrarNotificacion("<strong>ALERTA DE STOCK CRÍTICO:</strong> El artículo '{{ $producto->nombre }}' está por agotarse. Quedan solo <strong>{{ $producto->stock }}</strong> unidades.", "error");
+                        mostrarNotificacion("<strong>ALERTA DE STOCK CRÍTICO:</strong> El artículo '{{ addslashes($producto->nombre) }}' está por agotarse. Quedan solo <strong>{{ $producto->stock }}</strong> unidades.", "error");
                     @endif
                 @endforeach
             @endif

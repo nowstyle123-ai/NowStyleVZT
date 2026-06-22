@@ -37,7 +37,8 @@
         .talla-item {
             position: relative;
         }
-        .talla-item input[type="radio"] {
+        /* CORRECCIÓN: Ahora apunta a checkbox en lugar de radio */
+        .talla-item input[type="checkbox"] {
             position: absolute;
             opacity: 0;
             width: 0;
@@ -58,7 +59,8 @@
             transition: all 0.2s ease;
             user-select: none;
         }
-        .talla-item input[type="radio"]:checked + .talla-btn {
+        /* CORRECCIÓN: Estilo de activación adaptado para checkboxes seleccionados */
+        .talla-item input[type="checkbox"]:checked + .talla-btn {
             background-color: #dc2626;
             border-color: #dc2626;
             box-shadow: 0 4px 12px rgba(220, 38, 38, 0.3);
@@ -71,7 +73,6 @@
 
     <div id="create-product-container" style="background-color: #000000; min-height: 100vh; width: 100%; display: flex; flex-direction: column; font-family: sans-serif; box-sizing: border-box; padding-bottom: 4rem;">
         
-        <!-- Encabezado -->
         <div style="background-color: #09090b; border-bottom: 1px solid #27272a; padding: 1.5rem 2rem;">
             <div style="max-width: 600px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center;">
                 <h1 style="font-weight: 900; font-size: 1.5rem; text-transform: uppercase; color: #ffffff; margin: 0; letter-spacing: 0.05em;">
@@ -83,14 +84,12 @@
             </div>
         </div>
 
-        <!-- Cuerpo del Formulario -->
         <div style="max-width: 600px; width: 100%; margin: 2rem auto 0 auto; padding: 0 2rem; box-sizing: border-box;">
             
             <form action="{{ route('productos.store') }}" method="POST" enctype="multipart/form-data" style="background-color: #09090b; border: 1px solid #27272a; border-radius: 1rem; padding: 2.5rem; display: flex; flex-direction: column; gap: 1.5rem; box-shadow: 0 10px 30px -15px rgba(220, 38, 38, 0.15); margin: 0;">
                 
                 @csrf
 
-                <!-- 📟 CÓDIGO DE BARRAS (Prioritario - Arriba para lectura veloz) -->
                 <div style="background-color: rgba(220, 38, 38, 0.03); border: 1px dashed rgba(220, 38, 38, 0.3); padding: 1.25rem; border-radius: 0.75rem; display: flex; flex-direction: column; gap: 0.5rem;">
                     <label style="font-size: 12px; font-weight: bold; text-transform: uppercase; color: #ef4444 !important; display: flex; align-items: center; gap: 0.3rem;">
                         📟 Código de Barras Real (SKU)
@@ -98,13 +97,11 @@
                     <input type="text" name="codigo_barras" id="codigo_barras" style="background-color: #121214; font-family: monospace; font-size: 1rem; font-weight: bold; letter-spacing: 0.05em;" placeholder="Haz clic aquí y pasa el escáner sobre la etiqueta" required autofocus>
                 </div>
 
-                <!-- Nombre -->
                 <div style="display: flex; flex-direction: column; gap: 0.4rem;">
                     <label style="font-size: 12px; font-weight: bold; text-transform: uppercase;">Nombre del Producto</label>
                     <input type="text" name="nombre" placeholder="Ej. Camiseta Oversize Black" required>
                 </div>
 
-                <!-- Categoría Predefinida (Select Pro) -->
                 <div style="display: flex; flex-direction: column; gap: 0.4rem;">
                     <label style="font-size: 12px; font-weight: bold; text-transform: uppercase;">Categoría de Prenda</label>
                     <select name="categoria" required>
@@ -116,7 +113,6 @@
                     </select>
                 </div>
 
-                <!-- Distribución en fila para Precio y Stock -->
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
                     <div style="display: flex; flex-direction: column; gap: 0.4rem;">
                         <label style="font-size: 12px; font-weight: bold; text-transform: uppercase;">Precio ($)</label>
@@ -129,26 +125,23 @@
                     </div>
                 </div>
 
-                <!-- Talla (Botones visuales de selección rápida) -->
                 <div style="display: flex; flex-direction: column; gap: 0.4rem;">
-                    <label style="font-size: 12px; font-weight: bold; text-transform: uppercase;">Talla Comercial</label>
+                    <label style="font-size: 12px; font-weight: bold; text-transform: uppercase;">Tallas Comerciales Disponibles (Selecciona varias)</label>
                     <div class="tallas-grid">
-                        @foreach(['XS', 'S', 'M', 'L', 'XL',] as $talla)
+                        @foreach(['XS', 'S', 'M', 'L', 'XL'] as $talla)
                             <div class="talla-item">
-                                <input type="radio" name="talla" id="talla-{{ $talla }}" value="{{ $talla }}" {{ $talla == 'M' ? 'checked' : '' }}>
+                                <input type="checkbox" name="tallas[]" id="talla-{{ $talla }}" value="{{ $talla }}">
                                 <label for="talla-{{ $talla }}" class="talla-btn">{{ $talla }}</label>
                             </div>
                         @endforeach
                     </div>
                 </div>
 
-                <!-- Descripción -->
                 <div style="display: flex; flex-direction: column; gap: 0.4rem;">
                     <label style="font-size: 12px; font-weight: bold; text-transform: uppercase;">Descripción / Notas de Estampado</label>
                     <textarea name="descripcion" rows="3" style="resize: vertical;" placeholder="Detalles de composición de tela o espacio máximo para estampar..."></textarea>
                 </div>
 
-                <!-- Subir Foto Estilizado -->
                 <div style="display: flex; flex-direction: column; gap: 0.4rem;">
                     <label style="font-size: 12px; font-weight: bold; text-transform: uppercase;">Fotografía Base de Prenda</label>
                     <div style="background-color: #000000; border: 1px dashed #27272a; border-radius: 0.75rem; padding: 1.25rem; text-align: center; transition: border-color 0.2s;" onmouseover="this.style.borderColor='#52525b'" onmouseout="this.style.borderColor='#27272a'">
@@ -156,7 +149,6 @@
                     </div>
                 </div>
 
-                <!-- Botón de Envío Metálico/Neón -->
                 <button type="submit" style="width: 100%; margin-top: 1rem; background-color: #dc2626; color: #ffffff; padding: 1rem; border: none; border-radius: 0.75rem; font-weight: 900; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.05em; cursor: pointer; transition: all 0.2s; box-shadow: 0 4px 14px rgba(220, 38, 38, 0.3);" onmouseover="this.style.backgroundColor='#ef4444'; this.style.transform='translateY(-1px)'" onmouseout="this.style.backgroundColor='#dc2626'; this.style.transform='none'">
                     💾 Guardar Producto
                 </button>
@@ -165,7 +157,6 @@
         </div>
     </div>
 
-    <!-- Script para automatizar el escáner al cargar -->
     <script>
         window.addEventListener('DOMContentLoaded', () => {
             const inputCodigo = document.getElementById('codigo_barras');

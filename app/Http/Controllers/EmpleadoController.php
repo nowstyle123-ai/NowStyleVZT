@@ -5,18 +5,26 @@ namespace App\Http\Controllers;
 use App\Models\Producto;
 use App\Models\Pedido;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class EmpleadoController extends Controller
 {
     public function index()
     {
-        // Traemos los pedidos pendientes de estampado
-        $pedidos = Pedido::with('user')->whereIn('estado', ['pendiente', 'en proceso'])->orderBy('created_at', 'desc')->get();
-        
-        //  Traemos todos los productos para que el empleado los gestione
-        $productos = Producto::all();
+       // Las consultas que ya tenías para tus pedidos y productos
+    $pedidos = \App\Models\Pedido::where('estado', 'pendiente')->get(); // O como lo tengas
+    $productos = \App\Models\Producto::all();
 
-        return view('Empleado.dashboard', compact('pedidos', 'productos'));
+    // 🚀 NUEVA CONSULTA: Traer las últimas 10 ventas uniendo la tabla pedidos con users
+    $ultimasVentas = DB::table('pedidos')
+        ->join('users', 'pedidos.user_id', '=', 'users.id')
+        ->select('pedidos.*', 'users.name as cliente_nombre')
+        ->orderBy('pedidos.created_at', 'desc')
+        ->take(10)
+        ->get();
+
+    // Importante: Agrega 'ultimasVentas' dentro del compact()
+    return view('Empleado.dashboard', compact('pedidos', 'productos', 'ultimasVentas'));
     }
 
   public function completarPedido($id)

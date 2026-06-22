@@ -6,21 +6,24 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-
-public function up(): void
-{
-    Schema::create('productos', function (Blueprint $table) {
+    public function up(): void
+    {
+        Schema::create('productos', function (Blueprint $table) {
         $table->id();
         $table->string('nombre');
-        $table->text('descripcion');
+        $table->text('descripcion')->nullable();
         $table->decimal('precio', 10, 2);
         $table->integer('stock');
-        $table->string('talla');
+        
+        // CAMBIA ESTO: De string a text o json para guardar todas las tallas juntas
+        $table->text('tallas'); 
+        
         $table->string('categoria');
         $table->string('imagen')->nullable();
+        $table->string('codigo_barras')->nullable(); 
         $table->timestamps();
-    });
-}
+        });
+    }
 
     /**
      * Reverse the migrations.

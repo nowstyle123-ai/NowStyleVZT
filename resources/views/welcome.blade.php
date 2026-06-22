@@ -28,50 +28,20 @@
         a { text-decoration: none; }
 
         /* =============================================
-           PARTÍCULAS DE FONDO
-        ============================================= */
-        #particles {
-            position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            pointer-events: none;
-            z-index: 0;
-            overflow: hidden;
-        }
-
-        .particle {
-            position: absolute;
-            width: 2px;
-            height: 2px;
-            background-color: #dc2626;
-            border-radius: 50%;
-            opacity: 0;
-            animation: floatParticle linear infinite;
-        }
-
-        @keyframes floatParticle {
-            0%   { transform: translateY(100vh) scale(0); opacity: 0; }
-            10%  { opacity: 0.6; }
-            90%  { opacity: 0.3; }
-            100% { transform: translateY(-10vh) scale(1); opacity: 0; }
-        }
-
-        /* =============================================
-           NAVBAR
+           NAVBAR PREMIUM LIMPIO
         ============================================= */
         .navbar {
             position: fixed;
             top: 0; left: 0;
             width: 100%;
             z-index: 999;
-            background-color: rgba(0, 0, 0, 0.8);
+            background-color: rgba(0, 0, 0, 0.85);
             backdrop-filter: blur(12px);
             border-bottom: 1px solid #1a1a1a;
-            padding: 1rem 2rem;
+            padding: 1.2rem 2rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            transition: background-color 0.3s;
         }
 
         .navbar-logo {
@@ -84,45 +54,45 @@
 
         .navbar-logo span { color: #dc2626; }
 
-        .navbar-buttons { display: flex; gap: 0.75rem; }
-
-        .btn {
-            padding: 0.6rem 1.4rem;
-            border-radius: 0.5rem;
-            font-weight: 700;
-            font-size: 0.85rem;
-            text-transform: uppercase;
-            cursor: pointer;
-            transition: all 0.25s ease;
-            letter-spacing: 0.03em;
+        .nav-links {
+            display: flex;
+            gap: 1.5rem;
+            align-items: center;
         }
 
-        .btn-outline {
-            background-color: transparent;
+        .btn-nav-outline {
             border: 1px solid #3f3f46;
             color: #ffffff;
+            padding: 0.5rem 1rem;
+            border-radius: 0.35rem;
+            font-size: 0.8rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            transition: all 0.2s;
         }
 
-        .btn-outline:hover {
-            border-color: #dc2626;
-            color: #dc2626;
-            box-shadow: 0 0 12px rgba(220, 38, 38, 0.3);
+        .btn-nav-outline:hover {
+            border-color: #ffffff;
+            background-color: rgba(255, 255, 255, 0.05);
         }
 
-        .btn-primary {
+        .btn-nav-primary {
             background-color: #dc2626;
-            border: 1px solid #dc2626;
-            color: #ffffff;
+            color: white !important;
+            padding: 0.5rem 1rem;
+            border-radius: 0.35rem;
+            font-size: 0.8rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            transition: all 0.2s;
         }
 
-        .btn-primary:hover {
-            background-color: #b91c1c;
-            box-shadow: 0 0 18px rgba(220, 38, 38, 0.5);
-            transform: translateY(-1px);
+        .btn-nav-primary:hover {
+            background-color: #ef4444;
         }
 
         /* =============================================
-           HERO CON PARALLAX
+           HERO SECTION LOCAL Y SEGURO
         ============================================= */
         .hero {
             min-height: 100vh;
@@ -130,51 +100,39 @@
             align-items: center;
             justify-content: center;
             text-align: center;
-            padding: 8rem 2rem 4rem;
             position: relative;
             overflow: hidden;
-            background: #000;
         }
 
-        .hero-bg {
+        .hero-bg-split {
             position: absolute;
             inset: 0;
-            background:
-                radial-gradient(ellipse at 20% 50%, rgba(220, 38, 38, 0.12) 0%, transparent 60%),
-                radial-gradient(ellipse at 80% 20%, rgba(220, 38, 38, 0.08) 0%, transparent 50%),
-                radial-gradient(ellipse at 50% 80%, rgba(220, 38, 38, 0.06) 0%, transparent 50%);
-            will-change: transform;
+            display: flex;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
         }
 
-        /* Líneas decorativas */
-        .hero-lines {
-            position: absolute;
-            inset: 0;
-            background-image:
-                linear-gradient(rgba(220, 38, 38, 0.03) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(220, 38, 38, 0.03) 1px, transparent 1px);
-            background-size: 60px 60px;
+        .hero-split-left {
+            flex: 1;
+            background-image: linear-gradient(to bottom, rgba(0,0,0,0.35), rgba(0,0,0,0.75)), url('{{ asset("img/uno.jpg") }}');
+            background-size: cover;
+            background-position: 65% center;
+            border-right: 1px solid #1a1a1a;
+        }
+
+        .hero-split-right {
+            flex: 1;
+            background-image: linear-gradient(to bottom, rgba(0,0,0,0.35), rgba(0,0,0,0.75)), url('{{ asset("img/dos.jpg") }}');
+            background-size: cover;
+            background-position: center center;
         }
 
         .hero-content {
             position: relative;
             z-index: 1;
             max-width: 800px;
-        }
-
-        .hero-badge {
-            display: inline-block;
-            background-color: rgba(220, 38, 38, 0.1);
-            border: 1px solid rgba(220, 38, 38, 0.4);
-            color: #dc2626;
-            font-size: 0.75rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.12em;
-            padding: 0.45rem 1.2rem;
-            border-radius: 2rem;
-            margin-bottom: 1.5rem;
-            animation: fadeInDown 0.8s ease both;
+            padding: 2rem;
         }
 
         .hero-title {
@@ -183,25 +141,21 @@
             text-transform: uppercase;
             line-height: 1.05;
             margin-bottom: 1.5rem;
-            animation: fadeInUp 0.9s ease 0.2s both;
-        }
-
-        .hero-title span { color: #dc2626; }
-
-        .hero-title .outline-text {
-            -webkit-text-stroke: 2px #dc2626;
-            color: transparent;
+            letter-spacing: 0.02em;
+            color: #ffffff;
+            text-shadow: 0 4px 12px rgba(0,0,0,0.7);
         }
 
         .hero-subtitle {
             font-size: 1.1rem;
-            color: #a1a1aa;
+            color: #e4e4e7;
             line-height: 1.7;
             margin-bottom: 2.5rem;
             max-width: 520px;
             margin-left: auto;
             margin-right: auto;
-            animation: fadeInUp 0.9s ease 0.4s both;
+            font-weight: 500;
+            text-shadow: 0 2px 8px rgba(0,0,0,0.8);
         }
 
         .hero-buttons {
@@ -209,7 +163,6 @@
             gap: 1rem;
             justify-content: center;
             flex-wrap: wrap;
-            animation: fadeInUp 0.9s ease 0.6s both;
         }
 
         .btn-hero-primary {
@@ -224,17 +177,6 @@
             cursor: pointer;
             transition: all 0.25s;
             letter-spacing: 0.05em;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .btn-hero-primary::after {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: linear-gradient(rgba(255,255,255,0.1), transparent);
-            opacity: 0;
-            transition: opacity 0.2s;
         }
 
         .btn-hero-primary:hover {
@@ -243,589 +185,238 @@
             transform: translateY(-2px);
         }
 
-        .btn-hero-primary:hover::after { opacity: 1; }
-
         .btn-hero-outline {
             padding: 0.9rem 2.4rem;
             font-size: 1rem;
             border-radius: 0.5rem;
-            background-color: transparent;
+            background-color: rgba(0, 0, 0, 0.6);
             color: white;
             border: 1px solid #3f3f46;
             font-weight: 900;
             text-transform: uppercase;
             cursor: pointer;
+            backdrop-filter: blur(4px);
             transition: all 0.25s;
             letter-spacing: 0.05em;
         }
 
         .btn-hero-outline:hover {
             border-color: #ffffff;
-            box-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
             transform: translateY(-2px);
-        }
-
-        /* Stats debajo del hero */
-        .hero-stats {
-            display: flex;
-            justify-content: center;
-            gap: 3rem;
-            margin-top: 4rem;
-            flex-wrap: wrap;
-            animation: fadeInUp 0.9s ease 0.8s both;
-        }
-
-        .stat-item { text-align: center; }
-
-        .stat-number {
-            font-size: 2rem;
-            font-weight: 900;
-            color: #dc2626;
-        }
-
-        .stat-label {
-            font-size: 0.75rem;
-            color: #a1a1aa;
-            text-transform: uppercase;
-            letter-spacing: 0.08em;
         }
 
         /* =============================================
-           ANIMACIONES DE ENTRADA
+           SECCIÓN DEL CATÁLOGO
         ============================================= */
-        @keyframes fadeInDown {
-            from { opacity: 0; transform: translateY(-20px); }
-            to   { opacity: 1; transform: translateY(0); }
-        }
-
-        @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(30px); }
-            to   { opacity: 1; transform: translateY(0); }
-        }
-
-        @keyframes fadeInLeft {
-            from { opacity: 0; transform: translateX(-30px); }
-            to   { opacity: 1; transform: translateX(0); }
-        }
-
-        @keyframes fadeInRight {
-            from { opacity: 0; transform: translateX(30px); }
-            to   { opacity: 1; transform: translateX(0); }
-        }
-
-        .animate-on-scroll {
-            opacity: 0;
-            transform: translateY(40px);
-            transition: opacity 0.7s ease, transform 0.7s ease;
-        }
-
-        .animate-on-scroll.visible {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-       
-        .features {
-            padding: 6rem 2rem;
-            background-color: #09090b;
-            border-top: 1px solid #18181b;
-            position: relative;
-            z-index: 1;
-        }
-
-        .section-header { text-align: center; margin-bottom: 3rem; }
-
-        .section-tag {
-            display: inline-block;
-            color: #dc2626;
-            font-size: 0.75rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.12em;
-            margin-bottom: 0.75rem;
+        .products-section {
+            padding: 5rem 2rem;
+            max-width: 1300px;
+            margin: 0 auto;
         }
 
         .section-title {
-            font-size: clamp(1.8rem, 4vw, 2.5rem);
+            font-size: 2rem;
             font-weight: 900;
             text-transform: uppercase;
-            margin-bottom: 0.5rem;
-        }
-
-        .section-title span { color: #dc2626; }
-
-        .section-subtitle {
-            color: #a1a1aa;
-            font-size: 0.95rem;
-        }
-
-        .features-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
-            gap: 1.5rem;
-            max-width: 1100px;
-            margin: 0 auto;
-        }
-
-        .feature-card {
-            background-color: #000000;
-            border: 1px solid #27272a;
-            border-radius: 1rem;
-            padding: 2rem 1.5rem;
-            text-align: center;
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .feature-card::before {
-            content: '';
-            position: absolute;
-            bottom: 0; left: 0;
-            width: 100%; height: 2px;
-            background: linear-gradient(90deg, transparent, #dc2626, transparent);
-            transform: scaleX(0);
-            transition: transform 0.3s ease;
-        }
-
-        .feature-card:hover {
-            border-color: #dc2626;
-            transform: translateY(-5px);
-            box-shadow: 0 10px 30px rgba(220, 38, 38, 0.15);
-        }
-
-        .feature-card:hover::before { transform: scaleX(1); }
-
-        .feature-icon {
-            font-size: 2.8rem;
-            margin-bottom: 1rem;
-            display: block;
-        }
-
-        .feature-card h3 {
-            font-size: 1rem;
-            font-weight: 800;
-            text-transform: uppercase;
-            margin-bottom: 0.5rem;
             letter-spacing: 0.05em;
+            margin-bottom: 3rem;
+            text-align: left;
+            border-left: 4px solid #dc2626;
+            padding-left: 1rem;
         }
 
-        .feature-card p {
-            font-size: 0.85rem;
-            color: #a1a1aa;
-            line-height: 1.6;
-        }
-
-       
-        .gallery {
-            padding: 6rem 2rem;
-            background-color: #000000;
-            border-top: 1px solid #18181b;
-            position: relative;
-            z-index: 1;
-        }
-
-        .gallery-grid {
+        .products-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-            gap: 1.5rem;
-            max-width: 1200px;
-            margin: 0 auto;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 2rem;
         }
 
-        .gallery-card {
-            background-color: #09090b;
-            border: 1px solid #27272a;
-            border-radius: 1rem;
+        .product-card {
+            background-color: #0b0b0c;
+            border: 1px solid #18181b;
+            border-radius: 0.5rem;
             overflow: hidden;
-            transition: all 0.3s ease;
-            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.3s, border-color 0.3s;
         }
 
-        .gallery-card:hover {
-            transform: translateY(-8px);
-            border-color: #dc2626;
-            box-shadow: 0 20px 40px rgba(220, 38, 38, 0.15);
+        .product-card:hover {
+            transform: translateY(-5px);
+            border-color: #3f3f46;
         }
 
-        .gallery-card-img {
-            height: 220px;
-            overflow: hidden;
+        .product-image-wrapper {
             position: relative;
+            width: 100%;
+            padding-top: 120%; /* Proporción de la foto */
             background-color: #18181b;
+            overflow: hidden;
         }
 
-        .gallery-card-img img {
+        .product-image-wrapper img {
+            position: absolute;
+            top: 0; left: 0;
             width: 100%;
             height: 100%;
             object-fit: cover;
-            transition: transform 0.5s ease;
-            filter: brightness(0.85);
         }
 
-        .gallery-card:hover .gallery-card-img img {
-            transform: scale(1.08);
-            filter: brightness(1);
-        }
-
-        /* Overlay en hover */
-        .gallery-card-img::after {
-            content: 'Ver más →';
+        .badge-sale {
             position: absolute;
-            inset: 0;
-            background: rgba(220, 38, 38, 0.75);
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            top: 15px; left: 15px;
+            background-color: #dc2626;
+            color: #ffffff;
+            font-size: 0.7rem;
             font-weight: 900;
-            font-size: 1rem;
+            padding: 0.3rem 0.8rem;
             text-transform: uppercase;
-            letter-spacing: 0.1em;
-            opacity: 0;
-            transition: opacity 0.3s ease;
+            border-radius: 0.25rem;
+            letter-spacing: 0.05em;
         }
 
-        .gallery-card:hover .gallery-card-img::after { opacity: 1; }
+        .product-info {
+            padding: 1.5rem;
+        }
 
-        .gallery-card-body { padding: 1.25rem; }
-
-        .gallery-card-body h4 {
+        .product-name {
             font-size: 0.95rem;
-            font-weight: 800;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 0.5rem;
             text-transform: uppercase;
-            margin-bottom: 0.25rem;
-            letter-spacing: 0.03em;
         }
 
-        .gallery-card-price {
-            font-size: 1rem;
-            font-weight: 900;
-            color: #dc2626;
-            margin-bottom: 0.25rem;
+        .product-prices {
+            display: flex;
+            gap: 0.8rem;
+            font-size: 0.9rem;
+            font-weight: 700;
+            align-items: center;
         }
 
-        .gallery-card-body p {
-            font-size: 0.8rem;
+        .old-price {
             color: #71717a;
+            text-decoration: line-through;
+            font-size: 0.85rem;
         }
 
-        .gallery-cta {
-            text-align: center;
-            margin-top: 3rem;
+        .current-price {
+            color: #dc2626;
         }
 
-        .cta-banner {
-            padding: 5rem 2rem;
-            background: linear-gradient(135deg, #1a0000 0%, #000000 50%, #0d0000 100%);
-            border-top: 1px solid #27272a;
-            text-align: center;
-            position: relative;
-            overflow: hidden;
-            z-index: 1;
-        }
-
-        .cta-banner::before {
-            content: '';
-            position: absolute;
-            width: 500px; height: 500px;
-            background: radial-gradient(circle, rgba(220,38,38,0.12) 0%, transparent 70%);
-            top: 50%; left: 50%;
-            transform: translate(-50%, -50%);
-            border-radius: 50%;
-        }
-
-        .cta-banner h2 {
-            font-size: clamp(1.8rem, 4vw, 3rem);
-            font-weight: 900;
-            text-transform: uppercase;
-            margin-bottom: 1rem;
-            position: relative;
-        }
-
-        .cta-banner h2 span { color: #dc2626; }
-
-        .cta-banner p {
-            color: #a1a1aa;
-            font-size: 1rem;
-            margin-bottom: 2rem;
-            position: relative;
-        }
-
-       
+        /* =============================================
+           FOOTER
+        ============================================= */
         .footer {
             background-color: #09090b;
             border-top: 1px solid #18181b;
-            padding: 3rem 2rem;
+            padding: 2.5rem 2rem;
             text-align: center;
-            position: relative;
-            z-index: 1;
         }
 
-        .footer-logo {
-            font-size: 1.5rem;
-            font-weight: 900;
-            text-transform: uppercase;
-            margin-bottom: 0.75rem;
-        }
-
+        .footer-logo { font-size: 1.4rem; font-weight: 900; text-transform: uppercase; margin-bottom: 0.5rem; }
         .footer-logo span { color: #dc2626; }
-
-        .footer-desc {
-            color: #a1a1aa;
-            font-size: 0.85rem;
-            margin-bottom: 1.5rem;
-        }
-
-        .footer-socials {
-            display: flex;
-            justify-content: center;
-            gap: 0.75rem;
-            margin-bottom: 2rem;
-            flex-wrap: wrap;
-        }
-
-        .social-btn {
-            background-color: #18181b;
-            border: 1px solid #27272a;
-            color: #a1a1aa;
-            padding: 0.6rem 1.2rem;
-            border-radius: 0.5rem;
-            font-size: 0.85rem;
-            font-weight: 700;
-            transition: all 0.25s;
-        }
-
-        .social-btn:hover {
-            border-color: #dc2626;
-            color: #dc2626;
-            box-shadow: 0 0 12px rgba(220, 38, 38, 0.2);
-            transform: translateY(-2px);
-        }
-
-        .footer-copy {
-            color: #3f3f46;
-            font-size: 0.8rem;
-        }
+        .footer-copy { color: #3f3f46; font-size: 0.8rem; }
     </style>
 </head>
 <body>
 
-    {{-- PARTÍCULAS --}}
-    <div id="particles"></div>
-
-    {{-- =============================================
-         NAVBAR
-    ============================================= --}}
     <nav class="navbar">
         <div class="navbar-logo">Now<span>Style</span> Store</div>
-        <div class="navbar-buttons">
+        <div class="nav-links">
+            <a href="#catalogo" style="color: #a1a1aa; font-weight: 700; margin-right: 1rem; font-size: 0.85rem; text-transform: uppercase;">Catálogo</a>
+            <a href="{{ route('login') }}" class="btn-nav-outline">Ya tengo cuenta</a>
+            <a href="{{ route('register') }}" class="btn-nav-primary">Registrarse</a>
         </div>
     </nav>
 
-    {{-- =============================================
-         HERO
-    ============================================= --}}
     <section class="hero" id="hero">
-        <div class="hero-bg" id="heroBg"></div>
-        <div class="hero-lines"></div>
+        <div class="hero-bg-split">
+            <div class="hero-split-left"></div>
+            <div class="hero-split-right"></div>
+        </div>
 
         <div class="hero-content">
-            <div class="hero-badge">✨ Nueva Colección 2026</div>
-
-            <h1 class="hero-title">
-                Tu Estilo,<br>
-                Tu <span>Identidad</span><br>
-                <span class="outline-text">Tu Marca</span>
-            </h1>
-
-            <p class="hero-subtitle">
-                Ropa urbana de calidad con estampados únicos. Diseña tu propia prenda o elige entre nuestro catálogo exclusivo.
-            </p>
+            <h1 class="hero-title">NOW<br>STYLE<br>STORE</h1>
+            <p class="hero-subtitle">Tu Estilo, Tu Identidad, Tu Marca</p>
 
             <div class="hero-buttons">
-                <a href="{{ route('register') }}" class="btn-hero-primary">🔥 Comenzar Ahora</a>
-                <a href="{{ route('login') }}" class="btn-hero-outline">Ya tengo cuenta</a>
-            </div>
-
-            <div class="hero-stats">
-                <div class="stat-item">
-                    <div class="stat-number">+500</div>
-                    <div class="stat-label">Clientes</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-number">+80</div>
-                    <div class="stat-label">Productos</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-number">100%</div>
-                    <div class="stat-label">Calidad</div>
-                </div>
+                <a href="#catalogo" class="btn-hero-primary">🔥 Ver Catálogo</a>
+                <a href="{{ route('register') }}" class="btn-hero-outline">Registrarse</a>
             </div>
         </div>
     </section>
 
-    {{-- =============================================
-         CARACTERÍSTICAS
-    ============================================= --}}
-    <section class="features">
-        <div class="section-header animate-on-scroll">
-            <div class="section-tag">¿Por qué elegirnos?</div>
-            <h2 class="section-title">Lo Mejor de <span>NowStyle</span></h2>
-            <p class="section-subtitle">Calidad, estilo y personalización en un solo lugar.</p>
-        </div>
-
-        <div class="features-grid">
-            <div class="feature-card animate-on-scroll">
-                <span class="feature-icon">👕</span>
-                <h3>Ropa de Calidad</h3>
-                <p>Prendas seleccionadas con los mejores materiales del mercado.</p>
-            </div>
-            <div class="feature-card animate-on-scroll">
-                <span class="feature-icon">🎨</span>
-                <h3>Personalización</h3>
-                <p>Crea tu propio diseño con frases, colores y estampados únicos.</p>
-            </div>
-            <div class="feature-card animate-on-scroll">
-                <span class="feature-icon">🚀</span>
-                <h3>Entrega Rápida</h3>
-                <p>Recibe tu pedido en tiempo récord directo en tu puerta.</p>
-            </div>
-            <div class="feature-card animate-on-scroll">
-                <span class="feature-icon">🔒</span>
-                <h3>Compra Segura</h3>
-                <p>Tus datos y pagos siempre protegidos con total confianza.</p>
-            </div>
-        </div>
-    </section>
-
-    {{-- =============================================
-         GALERÍA DE PRODUCTOS
-    ============================================= --}}
-    <section class="gallery">
-        <div class="section-header animate-on-scroll">
-            <div class="section-tag">Catálogo</div>
-            <h2 class="section-title">Nuestros <span>Productos</span></h2>
-            <p class="section-subtitle">Una muestra de lo que te espera dentro.</p>
-        </div>
-
-        <div class="gallery-grid">
-            <div class="gallery-card animate-on-scroll">
-                <div class="gallery-card-img">
-                    <img src="https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=400&h=300&fit=crop" alt="Camiseta Urbana">
+ <section class="products-section" id="catalogo">
+        <h2 class="section-title">Nuestra Colección</h2>
+        
+        <div class="products-grid">
+            
+            <div class="product-card">
+                <div class="product-image-wrapper">
+                    <img src="{{ asset('img/buzo1.jpg') }}" alt="Oversized Hoodie">
+                    <span class="badge-sale">Oferta</span>
                 </div>
-                <div class="gallery-card-body">
-                    <h4>Camisetas Urbanas</h4>
-                    <div class="gallery-card-price">Desde $49.000 COP</div>
-                    <p>Estilo y comodidad en cada prenda</p>
+                <div class="product-info">
+                    <div class="product-name">Oversized Hoodie Premium</div>
+                    <div class="product-prices">
+                        <span class="old-price">₱56.00 PHP</span>
+                        <span class="current-price">₱45.00 PHP</span>
+                    </div>
                 </div>
             </div>
 
-            <div class="gallery-card animate-on-scroll">
-                <div class="gallery-card-img">
-                    <img src="https://images.unsplash.com/photo-1551028719-00167b16eac5?w=400&h=300&fit=crop" alt="Chaqueta">
+            <div class="product-card">
+                <div class="product-image-wrapper">
+                    <img src="{{ asset('img/chaqueta1.jpg') }}" alt="Street Jacket Essential">
+                    <span class="badge-sale">Oferta</span>
                 </div>
-                <div class="gallery-card-body">
-                    <h4>Chaquetas</h4>
-                    <div class="gallery-card-price">Desde $120.000 COP</div>
-                    <p>Para los días que necesitas más estilo</p>
-                </div>
-            </div>
-
-            <div class="gallery-card animate-on-scroll">
-                <div class="gallery-card-img">
-                    <img src="https://images.unsplash.com/photo-1542272604-787c3835535d?w=400&h=300&fit=crop" alt="Pantalones">
-                </div>
-                <div class="gallery-card-body">
-                    <h4>Pantalones</h4>
-                    <div class="gallery-card-price">Desde $89.000 COP</div>
-                    <p>Cortes modernos para el día a día</p>
+                <div class="product-info">
+                    <div class="product-name">Street Jacket Essential</div>
+                    <div class="product-prices">
+                        <span class="old-price">₱67.00 PHP</span>
+                        <span class="current-price">₱45.00 PHP</span>
+                    </div>
                 </div>
             </div>
 
-            <div class="gallery-card animate-on-scroll">
-                <div class="gallery-card-img">
-                    <img src="https://images.unsplash.com/photo-1588850561407-ed78c282e89b?w=400&h=300&fit=crop" alt="Accesorios">
+            <div class="product-card">
+                <div class="product-image-wrapper">
+                    <img src="{{ asset('img/buzo2.jpg') }}" alt="Urban Hoodie">
+                    <span class="badge-sale">Popular</span>
                 </div>
-                <div class="gallery-card-body">
-                    <h4>Accesorios</h4>
-                    <div class="gallery-card-price">Desde $25.000 COP</div>
-                    <p>El toque final que marca la diferencia</p>
+                <div class="product-info">
+                    <div class="product-name">Urban Hoodie Signature</div>
+                    <div class="product-prices">
+                        <span class="old-price">₱67.00 PHP</span>
+                        <span class="current-price">₱56.00 PHP</span>
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <div class="gallery-cta animate-on-scroll">
-            <a href="{{ route('register') }}" class="btn-hero-primary">Ver Catálogo Completo →</a>
+            <div class="product-card">
+                <div class="product-image-wrapper">
+                    <img src="{{ asset('img/pantalon1.jpg') }}" alt="Jogger Cargo">
+                    
+                </div>
+                <div class="product-info">
+                    <div class="product-name">pantalon baggy</div>
+                    <div class="product-prices">
+                        <span class="old-price">$120000</span>
+                        <span class="current-price">$100.000</span>
+                    </div>
+                </div>
+            </div>
+
         </div>
     </section>
 
-    {{-- =============================================
-         BANNER CTA
-    ============================================= --}}
-    <section class="cta-banner">
-        <div class="animate-on-scroll">
-            <h2>¿Listo para tu <span>próximo look?</span></h2>
-            <p>Únete a NowStyle Store y descubre moda que habla por ti.</p>
-            <a href="{{ route('register') }}" class="btn-hero-primary">🎯 Crear mi cuenta gratis</a>
-        </div>
-    </section>
-
-    {{-- =============================================
-         FOOTER
-    ============================================= --}}
     <footer class="footer">
         <div class="footer-logo">Now<span>Style</span> Store</div>
-        <p class="footer-desc">Moda urbana con identidad propia. Estampados únicos, calidad real.</p>
-
-        <div class="footer-socials">
-            <a href="#" class="social-btn">📸 Instagram</a>
-            <a href="#" class="social-btn">🎵 TikTok</a>
-            <a href="#" class="social-btn">💬 WhatsApp</a>
-        </div>
-
-        <p class="footer-copy">© {{ date('Y') }} NowStyle Store. Todos los derechos reservados.</p>
+        <div class="footer-copy">&copy; 2026 NowStyle Store. Todos los derechos reservados.</div>
     </footer>
-
-    {{-- =============================================
-         JAVASCRIPT: Partículas + Parallax + ScrollAnimations
-    ============================================= --}}
-    <script>
-        // ── Partículas flotantes ──────────────────
-        const container = document.getElementById('particles');
-        for (let i = 0; i < 40; i++) {
-            const p = document.createElement('div');
-            p.classList.add('particle');
-            p.style.left          = Math.random() * 100 + 'vw';
-            p.style.width         = (Math.random() * 3 + 1) + 'px';
-            p.style.height        = p.style.width;
-            p.style.animationDuration  = (Math.random() * 15 + 10) + 's';
-            p.style.animationDelay     = (Math.random() * 10) + 's';
-            p.style.opacity       = Math.random() * 0.5;
-            container.appendChild(p);
-        }
-
-        // ── Parallax en el hero ──────────────────
-        const heroBg = document.getElementById('heroBg');
-        window.addEventListener('scroll', () => {
-            const scrollY = window.scrollY;
-            if (heroBg) {
-                heroBg.style.transform = `translateY(${scrollY * 0.4}px)`;
-            }
-        });
-
-        // ── Animaciones al hacer scroll ──────────
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach((entry, i) => {
-                if (entry.isIntersecting) {
-                    setTimeout(() => {
-                        entry.target.classList.add('visible');
-                    }, i * 100);
-                }
-            });
-        }, { threshold: 0.15 });
-
-        document.querySelectorAll('.animate-on-scroll').forEach(el => observer.observe(el));
-    </script>
 
 </body>
 </html>

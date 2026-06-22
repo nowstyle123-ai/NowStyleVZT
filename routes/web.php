@@ -8,6 +8,11 @@ use App\Http\Controllers\ClienteController;
 use App\Http\Controllers\EmpleadoController;
 use App\Http\Controllers\GerenteController;
 use App\Http\Controllers\PedidoController;
+use App\Http\Controllers\ReporteController;
+
+Route::get('/reportes', [ReporteController::class, 'index'])
+    ->middleware(['auth']) 
+    ->name('reportes.index');
 
 
 Route::get('/buscar-producto/{codigo}', [App\Http\Controllers\ProductoController::class, 'buscarPorCodigo']);

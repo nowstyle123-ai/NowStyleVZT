@@ -619,8 +619,6 @@
     <nav class="navbar">
         <div class="navbar-logo">Now<span>Style</span> Store</div>
         <div class="navbar-buttons">
-            <a href="{{ route('login') }}" class="btn btn-outline">Iniciar Sesión</a>
-            <a href="{{ route('register') }}" class="btn btn-primary">Registrarse</a>
         </div>
     </nav>
 

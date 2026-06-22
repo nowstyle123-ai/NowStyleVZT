@@ -41,6 +41,9 @@ Route::middleware(['auth'])->group(function () {
     // RUTAS DEL GERENTE
     Route::get('/gerente', [GerenteController::class, 'index'])->name('gerente.index');
     Route::patch('/gerente/usuarios/{id}/rol', [GerenteController::class, 'updateRol'])->name('usuarios.updateRol');
+    
+    // RUTA AÑADIDA PARA SOLUCIONAR EL ERROR
+    Route::patch('/pedidos/{id}/update-estado', [PedidoController::class, 'updateEstado'])->name('pedidos.updateEstado');
 
     // RUTAS DEL EMPLEADO
     Route::get('/empleado', [EmpleadoController::class, 'index'])->name('empleado.index');

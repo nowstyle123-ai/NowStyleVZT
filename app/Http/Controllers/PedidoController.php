@@ -75,4 +75,21 @@ class PedidoController extends Controller
 
         return view('Usuario.pedidos', compact('pedidos'));
     }
+    public function updateEstado(Request $request, $id)
+    {
+        // 1. Validamos que el estado sea uno de los permitidos
+        $request->validate([
+            'estado' => 'required|in:pendiente,completado',
+        ]);
+
+        // 2. Buscamos el pedido en la base de datos
+        $pedido = Pedido::findOrFail($id);
+
+        // 3. Actualizamos el estado
+        $pedido->estado = $request->estado;
+        $pedido->save();
+
+        // 4. Regresamos al dashboard con un mensaje de éxito
+        return redirect()->back()->with('success', '¡Estado actualizado correctamente!');
+    }
 }

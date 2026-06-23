@@ -127,7 +127,7 @@ class ProductoController extends Controller
             $producto->descripcion = $request->input('descripcion');
             $producto->precio = $request->input('precio');
             $producto->stock = $request->input('stock');
-            $producto->talla = $talla; // Asignamos la talla correspondiente
+            $producto->tallas = $tallas; // Asignamos la talla correspondiente
             $producto->categoria = $request->input('categoria');
             $producto->codigo_barras = $request->input('codigo_barras');
             $producto->imagen = $rutaFoto;

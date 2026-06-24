@@ -15,7 +15,7 @@ return new class extends Migration
         $table->decimal('precio', 10, 2);
         $table->integer('stock');
         
-        // CAMBIA ESTO: De string a text o json para guardar todas las tallas juntas
+       
         $table->text('tallas'); 
         
         $table->string('categoria');

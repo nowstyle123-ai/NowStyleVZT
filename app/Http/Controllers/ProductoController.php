@@ -25,7 +25,7 @@ class ProductoController extends Controller
         'descripcion'   => 'nullable|string',
         'precio'        => 'required|numeric|min:0',
         'stock'         => 'required|integer|min:0',
-        'tallas'        => 'required|array', // Recibe el array de checkboxes de la vista
+        'tallas'        => 'required|array', 
         'categoria'     => 'required|string',
         'codigo_barras' => 'nullable|string',
     ]);
@@ -41,7 +41,7 @@ class ProductoController extends Controller
         'descripcion'   => $request->descripcion,
         'precio'        => $request->precio,
         'stock'         => $request->stock,
-        'tallas'        => $request->tallas, // Guarda el array completo directamente gracias al cast
+        'tallas'        => $request->tallas, 
         'categoria'     => $request->categoria,
         'codigo_barras' => $request->codigo_barras,
         'imagen'        => $rutaImagen,
@@ -127,7 +127,7 @@ class ProductoController extends Controller
             $producto->descripcion = $request->input('descripcion');
             $producto->precio = $request->input('precio');
             $producto->stock = $request->input('stock');
-            $producto->tallas = $tallas; // Asignamos la talla correspondiente
+            $producto->tallas = $tallas; 
             $producto->categoria = $request->input('categoria');
             $producto->codigo_barras = $request->input('codigo_barras');
             $producto->imagen = $rutaFoto;

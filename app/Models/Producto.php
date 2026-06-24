@@ -13,13 +13,13 @@ class Producto extends Model
    'descripcion',
     'precio', 
     'stock', 
-    'tallas', 
+    'talla', 
     'categoria', 
     'imagen',
      'codigo_barras'];
 
 // Esto le dice a Laravel que "tallas" se guarda como JSON pero lo usas como Array
 protected $casts = [
-    'tallas' => 'array',
+    'talla' => 'array',
 ];
 }

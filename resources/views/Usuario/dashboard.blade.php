@@ -193,18 +193,29 @@
 
                     <div style="margin-bottom: 1rem;">
                         <label style="color: var(--text-muted); font-size: 0.75rem; font-weight: bold; display: block; margin-bottom: 0.4rem;">TALLA DISPONIBLE:</label>
-                        <select id="talla-{{ $producto->id }}" class="input-glow" style="padding: 0.4rem; font-size: 0.8rem; font-weight: bold; text-transform: uppercase; border-color: rgba(220, 38, 38, 0.4);">
-                            @if(!empty($producto->talla) && trim($producto->talla) != '')
-                                @foreach(explode(',', $producto->talla) as $tallaIndividual)
-                                    <option value="{{ trim($tallaIndividual) }}">{{ trim($tallaIndividual) }}</option>
-                                @endforeach
-                            @else
-                                <option value="S">S</option>
-                                <option value="M" selected>M</option>
-                                <option value="L">L</option>
-                                <option value="XL">XL</option>
-                            @endif
-                        </select>
+<select id="talla-{{ $producto->id }}" class="input-glow" style="padding: 0.4rem; font-size: 0.8rem; font-weight: bold; text-transform: uppercase; border-color: rgba(220, 38, 38, 0.4);" required>
+    @php
+        // 1. Forzamos la lectura del texto puro de la base de datos
+        $tallaPura = $producto->getRawOriginal('talla') ?? $producto->getRawOriginal('tallas') ?? '';
+
+        // 2. Limpieza total: Quitamos comillas dobles, comillas simples, corchetes y espacios extras
+        $tallaLimpia = str_replace(['"', "'", '[', ']', ' '], '', $tallaPura);
+
+        // 3. Convertimos en array usando el separador de guiones
+        $tallasArray = !empty($tallaLimpia) ? explode('-', $tallaLimpia) : [];
+    @endphp
+
+    @if(count($tallasArray) > 0)
+        {{-- Al NO poner la opción "Talla..." estática, el select mostrará de una vez la primera opción del array --}}
+        @foreach($tallasArray as $tallaIndividual)
+            @if(trim($tallaIndividual) !== '')
+                <option value="{{ trim($tallaIndividual) }}">{{ trim($tallaIndividual) }}</option>
+            @endif
+        @endforeach
+    @else
+        <option value="" disabled selected>Sin tallas</option>
+    @endif
+</select>
                     </div>
 
                     @if($producto->stock <= 10)

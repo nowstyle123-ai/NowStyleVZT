@@ -18,7 +18,7 @@ class ProductoController extends Controller
         return view('productos.create');
     }
 
-    public function store(Request $request)
+   public function store(Request $request)
 {
     $request->validate([
         'nombre'        => 'required|string|max:255',
@@ -35,24 +35,37 @@ class ProductoController extends Controller
         $rutaImagen = $request->file('imagen')->store('productos', 'public');
     }
 
-    // CREA UN SOLO PRODUCTO
+    // 🔥 CORRECCIÓN: Unimos el array de checkboxes ['S', 'M', 'L'] en una cadena con guiones "S-M-L"
+    $tallasConGuiones = implode('-', $request->tallas);
+
+    // CREA UN SOLO PRODUCTO CON LAS COLUMNAS REALES DE TU BD
     Producto::create([
         'nombre'        => $request->nombre,
         'descripcion'   => $request->descripcion,
         'precio'        => $request->precio,
         'stock'         => $request->stock,
-        'tallas'        => $request->tallas, // Guarda el array completo directamente gracias al cast
+        'talla'         => $tallasConGuiones, // Usamos 'talla' en singular que es tu columna real
         'categoria'     => $request->categoria,
         'codigo_barras' => $request->codigo_barras,
         'imagen'        => $rutaImagen,
     ]);
 
+
     return redirect()->route('productos.index')->with('success', '¡Producto creado exitosamente con todas sus tallas!');
 }
 
-    public function show(string $id)
-    {
-    }
+  public function show(string $id)
+{
+    // Buscamos el producto por su ID
+    $producto = Producto::findOrFail($id);
+
+    // Como usas cast de array, Laravel convierte automáticamente el JSON de la BD a un array de PHP
+    // Si por alguna razón está vacío o es nulo, nos aseguramos de pasar un array vacío.
+    $tallasDisponibles = is_array($producto->tallas) ? $producto->tallas : [];
+
+    // Retornamos la vista del detalle del producto pasándole los datos
+    return view('productos.show', compact('producto', 'tallasDisponibles'));
+}
 
     public function edit(string $id)
     {
@@ -61,18 +74,23 @@ class ProductoController extends Controller
     }
 
     public function update(Request $request, string $id)
-    {
-        $producto = Producto::findOrFail($id);
-        $datos = $request->all();
+{
+    $producto = Producto::findOrFail($id);
+    $datos = $request->all();
 
-        if ($request->hasFile('imagen')) {
-            $datos['imagen'] = $request->file('imagen')->store('productos', 'public');
-        }
-
-        $producto->update($datos);
-
-        return redirect()->route('productos.index');
+    if ($request->hasFile('imagen')) {
+        $datos['imagen'] = $request->file('imagen')->store('productos', 'public');
     }
+
+    // 🔥 CORRECCIÓN PARA EDITAR: Si se cambian las tallas en la edición, también las une con guiones
+    if ($request->has('tallas') && is_array($request->tallas)) {
+        $datos['talla'] = implode('-', $request->tallas);
+    }
+
+    $producto->update($datos);
+
+    return redirect()->route('productos.index');
+}
 
     public function destroy(string $id)
     {

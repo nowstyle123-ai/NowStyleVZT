@@ -7,15 +7,23 @@ use Illuminate\Notifications\Messages\MailMessage;
 
 class CustomResetPassword extends ResetPassword
 {
+    // 🔥 Añadimos esto para que Laravel sepa que es una alerta/acción importante y pinte el botón de rojo
+    public $level = 'error'; 
+
     public function toMail($notifiable)
     {
+        $url = url(route('password.reset', [
+            'token' => $this->token,
+            'email' => $notifiable->getEmailForPasswordReset(),
+        ], false));
+
         return (new MailMessage)
-            ->subject('Restablecer contraseña - NowStyleVZT')
-            ->greeting('¡Hola!')
-            ->line('Recibiste este correo porque solicitaste restablecer tu contraseña.')
-            ->action('Restablecer contraseña', url('/reset-password/'.$this->token.'?email='.$notifiable->email))
-            ->line('Este enlace expira en 60 minutos.')
-            ->line('Si no fuiste tú, ignora este mensaje.')
-            ->salutation('NowStyleVZT');
+            ->subject('Recuperación de Contraseña - NOWSTYLE 🚀🔥')
+            ->greeting('¡Hola, Team NOWSTYLE!')
+            ->line('Recibiste este correo porque se solicitó restablecer la contraseña de acceso para tu cuenta en nuestra plataforma.')
+            ->action('Restablecer Contraseña', $url)
+            ->line('Este enlace de seguridad vencerá y expirará en un plazo de 60 minutos.')
+            ->line('Si tú no solicitaste este cambio, puedes ignorar este mensaje de forma segura.')
+            ->salutation('Saludos, el equipo de NOWSTYLE.');
     }
 }
